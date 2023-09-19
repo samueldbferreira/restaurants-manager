@@ -1,0 +1,22 @@
+import { prisma } from "../../../../shared/infra/prisma";
+import { ICreateRestaurantDTO } from "../../dtos/ICreateRestaurantDTO";
+import { IRestaurant } from "../../entities/IRestaurant";
+import { IRestaurantsRepository } from "../IRestaurantsRepository";
+
+class RestaurantsRepositoryPrisma implements IRestaurantsRepository {
+	async findByName(name: string): Promise<IRestaurant | null> {
+		return await prisma.restaurant.findUnique({
+			where: {
+				name,
+			},
+		});
+	}
+
+	async create(data: ICreateRestaurantDTO): Promise<IRestaurant> {
+		return await prisma.restaurant.create({
+			data,
+		});
+	}
+}
+
+export { RestaurantsRepositoryPrisma };

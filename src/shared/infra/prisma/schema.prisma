@@ -6,6 +6,30 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
+}
+
+type Day {
+  start String
+  end   String
+}
+
+type Schedule {
+  sun Day
+  mon Day
+  tue Day
+  wed Day
+  thu Day
+  fri Day
+  sat Day
+}
+
+model Restaurant {
+  id        String   @id @default(uuid()) @map("_id")
+  name      String   @unique
+  address   String
+  photo     String?
+  schedule  Schedule
+  createdAt DateTime @default(now())
 }
