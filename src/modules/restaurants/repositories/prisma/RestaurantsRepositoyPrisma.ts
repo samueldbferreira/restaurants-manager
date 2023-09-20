@@ -17,6 +17,10 @@ class RestaurantsRepositoryPrisma implements IRestaurantsRepository {
 			data,
 		});
 	}
+
+	async listAll(): Promise<IRestaurant[]> {
+		return await prisma.restaurant.findMany();
+	}
 }
 
 export { RestaurantsRepositoryPrisma };

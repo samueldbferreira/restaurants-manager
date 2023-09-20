@@ -5,6 +5,8 @@ interface IRestaurantsRepository {
 	findByName(name: string): Promise<IRestaurant | null>;
 
 	create(data: ICreateRestaurantDTO): Promise<IRestaurant>;
+
+	listAll(): Promise<IRestaurant[]>;
 }
 
 export { IRestaurantsRepository };

@@ -21,6 +21,10 @@ class RestaurantsRepositoryInMemory implements IRestaurantsRepository {
 
 		return newRestaurant;
 	}
+
+	async listAll(): Promise<IRestaurant[]> {
+		return this.restaurants;
+	}
 }
 
 export { RestaurantsRepositoryInMemory };
