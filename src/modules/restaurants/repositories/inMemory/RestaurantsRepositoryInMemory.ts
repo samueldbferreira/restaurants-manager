@@ -10,6 +10,10 @@ class RestaurantsRepositoryInMemory implements IRestaurantsRepository {
 		this.restaurants = [];
 	}
 
+	async findById(id: string): Promise<IRestaurant | null> {
+		return this.restaurants.find((r) => r.id === id) || null;
+	}
+
 	async findByName(name: string): Promise<IRestaurant | null> {
 		return this.restaurants.find((r) => r.name === name) || null;
 	}

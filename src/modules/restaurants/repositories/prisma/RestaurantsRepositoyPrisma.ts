@@ -4,6 +4,14 @@ import { IRestaurant } from "../../entities/IRestaurant";
 import { IRestaurantsRepository } from "../IRestaurantsRepository";
 
 class RestaurantsRepositoryPrisma implements IRestaurantsRepository {
+	async findById(id: string): Promise<IRestaurant | null> {
+		return await prisma.restaurant.findUnique({
+			where: {
+				id,
+			},
+		});
+	}
+
 	async findByName(name: string): Promise<IRestaurant | null> {
 		return await prisma.restaurant.findUnique({
 			where: {
