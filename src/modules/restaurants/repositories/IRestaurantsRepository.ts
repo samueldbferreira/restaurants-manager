@@ -9,6 +9,8 @@ interface IRestaurantsRepository {
 	create(data: ICreateRestaurantDTO): Promise<IRestaurant>;
 
 	listAll(): Promise<IRestaurant[]>;
+
+	delete(id: string): Promise<void>;
 }
 
 export { IRestaurantsRepository };

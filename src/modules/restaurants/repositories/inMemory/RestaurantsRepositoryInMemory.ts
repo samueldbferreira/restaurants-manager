@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { ICreateRestaurantDTO } from "../../dtos/ICreateRestaurantDTO";
 import { IRestaurant } from "../../entities/IRestaurant";
 import { Restaurant } from "../../entities/implementations/Restaurant";
@@ -28,6 +29,12 @@ class RestaurantsRepositoryInMemory implements IRestaurantsRepository {
 
 	async listAll(): Promise<IRestaurant[]> {
 		return this.restaurants;
+	}
+
+	async delete(id: string): Promise<void> {
+		this.restaurants = this.restaurants.filter((r) => r.id !== id);
+
+		return;
 	}
 }
 
