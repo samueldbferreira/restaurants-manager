@@ -26,10 +26,19 @@ type Schedule {
 }
 
 model Restaurant {
-  id        String   @id @default(uuid()) @map("_id")
-  name      String   @unique
+  id        String     @id @default(uuid()) @map("_id")
+  name      String     @unique
   address   String
   photo     String?
   schedule  Schedule
-  createdAt DateTime @default(now())
+  createdAt DateTime   @default(now())
+  Category  Category[]
+}
+
+model Category {
+  id           String     @id @default(uuid()) @map("_id")
+  name         String     @unique
+  description  String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String
 }
