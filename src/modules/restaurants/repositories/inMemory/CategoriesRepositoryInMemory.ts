@@ -10,8 +10,15 @@ class CategoriesRepositoryInMemory implements ICategoriesRepository {
 		this.categories = [];
 	}
 
-	async findByName(name: string): Promise<ICategory | null> {
-		return this.categories.find((c) => c.name === name) || null;
+	async findByName(
+		name: string,
+		restaurantId: string
+	): Promise<ICategory | null> {
+		return (
+			this.categories.find(
+				(c) => c.name === name && c.restaurantId === restaurantId
+			) || null
+		);
 	}
 
 	async create(data: ICreateCategoryDTO): Promise<ICategory> {
@@ -20,6 +27,10 @@ class CategoriesRepositoryInMemory implements ICategoriesRepository {
 		this.categories.push(newCategory);
 
 		return newCategory;
+	}
+
+	async listByRestaurant(restaurantId: string): Promise<ICategory[]> {
+		return this.categories.filter((c) => c.restaurantId === restaurantId);
 	}
 }
 

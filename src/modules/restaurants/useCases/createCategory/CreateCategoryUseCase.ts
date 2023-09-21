@@ -20,7 +20,8 @@ class CreateCategoryUseCase {
 
 	async execute(data: IRequest) {
 		const nameAlreadyExists = await this.categoriesRepository.findByName(
-			data.name
+			data.name,
+			data.restaurantId
 		);
 		if (nameAlreadyExists) {
 			throw new AppError("This category name is already in use.");

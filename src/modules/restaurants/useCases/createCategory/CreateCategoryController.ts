@@ -4,7 +4,8 @@ import { CreateCategoryUseCase } from "./CreateCategoryUseCase";
 
 class CreateCategoryController {
 	async handle(req: Request, res: Response) {
-		const { name, description, restaurantId } = req.body;
+		const { restaurantId } = req.params;
+		const { name, description } = req.body;
 
 		const createCategoryUseCase = container.resolve(CreateCategoryUseCase);
 

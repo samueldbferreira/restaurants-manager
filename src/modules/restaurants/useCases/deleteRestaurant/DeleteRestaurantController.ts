@@ -4,11 +4,11 @@ import { DeleteRestaurantUseCase } from "./DeleteRestaurantUseCase";
 
 class DeleteRestaurantController {
 	async handle(req: Request, res: Response) {
-		const { id } = req.params;
+		const { restaurantId } = req.params;
 
 		const deleteRestaurantUseCase = container.resolve(DeleteRestaurantUseCase);
 
-		await deleteRestaurantUseCase.execute(id);
+		await deleteRestaurantUseCase.execute(restaurantId);
 
 		res.status(204).send();
 	}
