@@ -4,6 +4,14 @@ import { ICategory } from "../../entities/ICategory";
 import { ICategoriesRepository } from "../ICategoriesRepository";
 
 class CategoriesRepositoryPrisma implements ICategoriesRepository {
+	async findById(id: string): Promise<ICategory | null> {
+		return await prisma.category.findUnique({
+			where: {
+				id,
+			},
+		});
+	}
+
 	async findByName(
 		name: string,
 		restaurantId: string
