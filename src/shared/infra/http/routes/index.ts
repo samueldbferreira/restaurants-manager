@@ -7,10 +7,12 @@ import { GetRestaurantController } from "../../../../modules/restaurants/useCase
 import { ListRestaurantsController } from "../../../../modules/restaurants/useCases/listRestaurants/ListRestaurantsController";
 import { DeleteRestaurantController } from "../../../../modules/restaurants/useCases/deleteRestaurant/DeleteRestaurantController";
 import { CreateProductController } from "../../../../modules/restaurants/useCases/createProduct/CreateProductController";
+import { ListProductsController } from "../../../../modules/restaurants/useCases/listProducts/ListProductsController";
 
 const routes = Router();
 
 const createProductController = new CreateProductController();
+const listProductsController = new ListProductsController();
 
 const createCategoryController = new CreateCategoryController();
 const listCategoriesController = new ListCategoriesController();
@@ -22,8 +24,14 @@ const deleteRestaurantController = new DeleteRestaurantController();
 
 //routes.get("/restaurants/:restaurantId/products/:productId"); //get single product
 //routes.patch("/restaurants/:restaurantId/products/:productId"); //update product
-routes.post("/restaurants/:restaurantId/products", createProductController.handle); //add product
-//routes.get("/restaurants/:restaurantId/products");  // list all the products of a restaurant + query params to filter
+routes.post(
+	"/restaurants/:restaurantId/products",
+	createProductController.handle
+); //add product
+routes.get(
+	"/restaurants/:restaurantId/products",
+	listProductsController.handle
+); // list all the products of a restaurant + query params to filter
 
 routes.post(
 	"/restaurants/:restaurantId/categories",
