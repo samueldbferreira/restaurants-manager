@@ -31,11 +31,29 @@ class RestaurantsRepositoryPrisma implements IRestaurantsRepository {
 	}
 
 	async delete(id: string): Promise<void> {
-		await prisma.restaurant.delete({
+		const deleteProducts = prisma.product.deleteMany({
+			where: {
+				restaurantId: id,
+			},
+		});
+
+		const deleteCategories = prisma.category.deleteMany({
+			where: {
+				restaurantId: id,
+			},
+		});
+
+		const deleteRestaurant = prisma.restaurant.delete({
 			where: {
 				id,
 			},
 		});
+
+		await prisma.$transaction([
+			deleteProducts,
+			deleteCategories,
+			deleteRestaurant,
+		]);
 
 		return;
 	}
