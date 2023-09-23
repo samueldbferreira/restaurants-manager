@@ -37,6 +37,24 @@ class CategoriesRepositoryPrisma implements ICategoriesRepository {
 			},
 		});
 	}
+
+	async delete(id: string): Promise<void> {
+		const deleteProducts = prisma.product.deleteMany({
+			where: {
+				categoryId: id,
+			},
+		});
+
+		const deleteCategory = prisma.category.delete({
+			where: {
+				id,
+			},
+		});
+
+		await prisma.$transaction([deleteProducts, deleteCategory]);
+
+		return;
+	}
 }
 
 export { CategoriesRepositoryPrisma };

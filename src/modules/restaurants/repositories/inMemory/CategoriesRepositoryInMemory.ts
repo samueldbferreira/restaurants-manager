@@ -36,6 +36,12 @@ class CategoriesRepositoryInMemory implements ICategoriesRepository {
 	async listByRestaurant(restaurantId: string): Promise<ICategory[]> {
 		return this.categories.filter((c) => c.restaurantId === restaurantId);
 	}
+
+	async delete(id: string): Promise<void> {
+		this.categories = this.categories.filter((c) => c.id !== id);
+
+		return;
+	}
 }
 
 export { CategoriesRepositoryInMemory };

@@ -9,6 +9,8 @@ interface ICategoriesRepository {
 	create(data: ICreateCategoryDTO): Promise<ICategory>;
 
 	listByRestaurant(restaurantId: string): Promise<ICategory[]>;
+
+	delete(id: string): Promise<void>;
 }
 
 export { ICategoriesRepository };

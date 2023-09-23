@@ -12,7 +12,7 @@ class DeleteRestaurantUseCase {
 	async execute(id: string) {
 		const restaurantExists = await this.restaurantsRepository.findById(id);
 		if (!restaurantExists) {
-			throw new AppError("Restaurant does not exist");
+			throw new AppError("Restaurant does not exist.");
 		} else {
 			await this.restaurantsRepository.delete(id);
 		}
