@@ -11,6 +11,10 @@ class ProductsRepositoryInMemory implements IProductsRepository {
 		this.products = [];
 	}
 
+	async findById(id: string): Promise<IProduct | null> {
+		return this.products.find((p) => p.id === id) || null;
+	}
+
 	async findByName(
 		name: string,
 		restaurantId: string

@@ -5,6 +5,14 @@ import { IProduct } from "../../entities/IProduct";
 import { IProductsRepository } from "../IProductsRepository";
 
 class ProductsRepositoryPrisma implements IProductsRepository {
+	async findById(id: string): Promise<IProduct | null> {
+		return await prisma.product.findUnique({
+			where: {
+				id,
+			},
+		});
+	}
+
 	async findByName(
 		name: string,
 		restaurantId: string
