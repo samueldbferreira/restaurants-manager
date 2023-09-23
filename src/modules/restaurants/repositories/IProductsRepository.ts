@@ -10,6 +10,8 @@ interface IProductsRepository {
 	create(data: ICreateProductDTO): Promise<IProduct>;
 
 	list(data: IListProductsDTO): Promise<IProduct[]>;
+
+	delete(productId: string): Promise<void>;
 }
 
 export { IProductsRepository };

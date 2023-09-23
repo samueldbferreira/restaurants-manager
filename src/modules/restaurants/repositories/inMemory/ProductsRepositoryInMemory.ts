@@ -34,8 +34,14 @@ class ProductsRepositoryInMemory implements IProductsRepository {
 		return newProduct;
 	}
 
-	list(data: IListProductsDTO): Promise<IProduct[]> {
-		throw new Error("Method not implemented.");
+	async list(data: IListProductsDTO): Promise<IProduct[]> {
+		return this.products.filter((p) => p.restaurantId === data.restaurantId);
+	}
+
+	async delete(productId: string): Promise<void> {
+		this.products = this.products.filter((p) => p.id !== productId);
+
+		return;
 	}
 }
 

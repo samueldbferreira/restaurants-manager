@@ -10,12 +10,14 @@ import { CreateProductController } from "../../../../modules/restaurants/useCase
 import { ListProductsController } from "../../../../modules/restaurants/useCases/listProducts/ListProductsController";
 import { GetProductController } from "../../../../modules/restaurants/useCases/getProduct/GetProductController";
 import { DeleteCategoryController } from "../../../../modules/restaurants/useCases/deleteCategory/DeleteCategoryController";
+import { DeleteProductController } from "../../../../modules/restaurants/useCases/deleteProduct/DeleteProductController";
 
 const routes = Router();
 
 const createProductController = new CreateProductController();
 const listProductsController = new ListProductsController();
 const getProductController = new GetProductController();
+const deleteProductController = new DeleteProductController();
 
 const createCategoryController = new CreateCategoryController();
 const listCategoriesController = new ListCategoriesController();
@@ -29,34 +31,46 @@ const deleteRestaurantController = new DeleteRestaurantController();
 routes.get(
 	"/restaurants/:restaurantId/products/:productId",
 	getProductController.handle
-); //get single product
+);
+
+routes.delete(
+	"/restaurants/:restaurantId/products/:productId",
+	deleteProductController.handle
+);
 
 //routes.patch("/restaurants/:restaurantId/products/:productId"); //update product
+
 routes.post(
 	"/restaurants/:restaurantId/products",
 	createProductController.handle
-); //add product
+);
+
 routes.get(
 	"/restaurants/:restaurantId/products",
 	listProductsController.handle
-); // list all the products of a restaurant + query params to filter
+);
 
 routes.post(
 	"/restaurants/:restaurantId/categories",
 	createCategoryController.handle
 );
+
 routes.get(
 	"/restaurants/:restaurantId/categories",
 	listCategoriesController.handle
 );
+
 routes.delete(
 	"/restaurants/:restaurantId/categories/:categoryId",
 	deleteCategoryController.handle
 );
 
 routes.post("/restaurants", createRestaurantController.handle);
+
 routes.get("/restaurants/:restaurantId", getRestaurantController.handle);
+
 routes.get("/restaurants", listRestaurantsController.handle);
+
 routes.delete("/restaurants/:restaurantId", deleteRestaurantController.handle);
 
 export { routes };
