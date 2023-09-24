@@ -1,5 +1,6 @@
 import { prisma } from "../../../../shared/infra/prisma";
 import { ICreateRestaurantDTO } from "../../dtos/ICreateRestaurantDTO";
+import { IUpdateRestaurantDTO } from "../../dtos/IUpdateRestaurantDTO";
 import { IRestaurant } from "../../entities/IRestaurant";
 import { IRestaurantsRepository } from "../IRestaurantsRepository";
 
@@ -56,6 +57,22 @@ class RestaurantsRepositoryPrisma implements IRestaurantsRepository {
 		]);
 
 		return;
+	}
+
+	async update(data: IUpdateRestaurantDTO): Promise<IRestaurant> {
+		const updatedRestaurant = await prisma.restaurant.update({
+			where: {
+				id: data.restaurantId,
+			},
+			data: {
+				photo: data.photo,
+				name: data.name,
+				address: data.address,
+				schedule: data.schedule,
+			},
+		});
+
+		return updatedRestaurant;
 	}
 }
 

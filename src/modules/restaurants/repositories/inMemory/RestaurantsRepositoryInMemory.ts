@@ -3,6 +3,7 @@ import { ICreateRestaurantDTO } from "../../dtos/ICreateRestaurantDTO";
 import { IRestaurant } from "../../entities/IRestaurant";
 import { Restaurant } from "../../entities/implementations/Restaurant";
 import { IRestaurantsRepository } from "../IRestaurantsRepository";
+import { IUpdateRestaurantDTO } from "../../dtos/IUpdateRestaurantDTO";
 
 class RestaurantsRepositoryInMemory implements IRestaurantsRepository {
 	private restaurants: IRestaurant[];
@@ -35,6 +36,16 @@ class RestaurantsRepositoryInMemory implements IRestaurantsRepository {
 		this.restaurants = this.restaurants.filter((r) => r.id !== id);
 
 		return;
+	}
+
+	async update(data: IUpdateRestaurantDTO): Promise<IRestaurant> {
+		const idx = this.restaurants.findIndex((r) => r.id == data.restaurantId);
+
+		const restaurant = this.restaurants[idx];
+
+		this.restaurants[idx] = Object.assign(restaurant, data);
+
+		return this.restaurants[idx];
 	}
 }
 

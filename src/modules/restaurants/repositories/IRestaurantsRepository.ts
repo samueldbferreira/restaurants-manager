@@ -1,4 +1,5 @@
 import { ICreateRestaurantDTO } from "../dtos/ICreateRestaurantDTO";
+import { IUpdateRestaurantDTO } from "../dtos/IUpdateRestaurantDTO";
 import { IRestaurant } from "../entities/IRestaurant";
 
 interface IRestaurantsRepository {
@@ -11,6 +12,8 @@ interface IRestaurantsRepository {
 	listAll(): Promise<IRestaurant[]>;
 
 	delete(id: string): Promise<void>;
+
+	update(data: IUpdateRestaurantDTO): Promise<IRestaurant>;
 }
 
 export { IRestaurantsRepository };
