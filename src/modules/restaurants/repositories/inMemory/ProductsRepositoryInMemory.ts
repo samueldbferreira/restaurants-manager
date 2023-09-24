@@ -1,5 +1,6 @@
 import { ICreateProductDTO } from "../../dtos/ICreateProductDTO";
 import { IListProductsDTO } from "../../dtos/IListProductsDTO";
+import { IUpdateProductDTO } from "../../dtos/IUpdateProductDTO";
 import { IProduct } from "../../entities/IProduct";
 import { Product } from "../../entities/implementations/Product";
 import { IProductsRepository } from "../IProductsRepository";
@@ -42,6 +43,16 @@ class ProductsRepositoryInMemory implements IProductsRepository {
 		this.products = this.products.filter((p) => p.id !== productId);
 
 		return;
+	}
+
+	async update(data: IUpdateProductDTO): Promise<IProduct> {
+		const idx = this.products.findIndex((p) => p.id == data.productId);
+
+		const product = this.products[idx];
+
+		this.products[idx] = Object.assign(product, data);
+
+		return this.products[idx];
 	}
 }
 

@@ -11,6 +11,7 @@ import { ListProductsController } from "../../../../modules/restaurants/useCases
 import { GetProductController } from "../../../../modules/restaurants/useCases/getProduct/GetProductController";
 import { DeleteCategoryController } from "../../../../modules/restaurants/useCases/deleteCategory/DeleteCategoryController";
 import { DeleteProductController } from "../../../../modules/restaurants/useCases/deleteProduct/DeleteProductController";
+import { UpdateProductController } from "../../../../modules/restaurants/useCases/updateProduct/UpdateProductController";
 
 const routes = Router();
 
@@ -18,6 +19,7 @@ const createProductController = new CreateProductController();
 const listProductsController = new ListProductsController();
 const getProductController = new GetProductController();
 const deleteProductController = new DeleteProductController();
+const updateProductController = new UpdateProductController();
 
 const createCategoryController = new CreateCategoryController();
 const listCategoriesController = new ListCategoriesController();
@@ -38,7 +40,10 @@ routes.delete(
 	deleteProductController.handle
 );
 
-//routes.patch("/restaurants/:restaurantId/products/:productId"); //update product
+routes.patch(
+	"/restaurants/:restaurantId/products/:productId",
+	updateProductController.handle
+);
 
 routes.post(
 	"/restaurants/:restaurantId/products",

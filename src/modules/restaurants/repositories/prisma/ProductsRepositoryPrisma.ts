@@ -1,6 +1,7 @@
 import { prisma } from "../../../../shared/infra/prisma";
 import { ICreateProductDTO } from "../../dtos/ICreateProductDTO";
 import { IListProductsDTO } from "../../dtos/IListProductsDTO";
+import { IUpdateProductDTO } from "../../dtos/IUpdateProductDTO";
 import { IProduct } from "../../entities/IProduct";
 import { IProductsRepository } from "../IProductsRepository";
 
@@ -62,6 +63,22 @@ class ProductsRepositoryPrisma implements IProductsRepository {
 		});
 
 		return;
+	}
+
+	async update(data: IUpdateProductDTO): Promise<IProduct> {
+		const updatedProduct = await prisma.product.update({
+			where: {
+				id: data.productId,
+			},
+			data: {
+				photo: data.photo,
+				name: data.name,
+				price: data.price,
+				categoryId: data.categoryId,
+			},
+		});
+
+		return updatedProduct;
 	}
 }
 
