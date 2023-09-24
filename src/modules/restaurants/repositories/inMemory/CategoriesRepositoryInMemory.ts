@@ -1,4 +1,5 @@
 import { ICreateCategoryDTO } from "../../dtos/ICreateCategoryDTO";
+import { IUpdateCategoryDTO } from "../../dtos/IUpdateCategoryDTO";
 import { ICategory } from "../../entities/ICategory";
 import { Category } from "../../entities/implementations/Category";
 import { ICategoriesRepository } from "../ICategoriesRepository";
@@ -41,6 +42,16 @@ class CategoriesRepositoryInMemory implements ICategoriesRepository {
 		this.categories = this.categories.filter((c) => c.id !== id);
 
 		return;
+	}
+
+	async update(data: IUpdateCategoryDTO): Promise<ICategory> {
+		const idx = this.categories.findIndex((c) => c.id == data.categoryId);
+
+		const category = this.categories[idx];
+
+		this.categories[idx] = Object.assign(category, data);
+
+		return this.categories[idx];
 	}
 }
 

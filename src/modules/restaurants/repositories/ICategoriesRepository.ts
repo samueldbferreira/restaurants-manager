@@ -1,4 +1,5 @@
 import { ICreateCategoryDTO } from "../dtos/ICreateCategoryDTO";
+import { IUpdateCategoryDTO } from "../dtos/IUpdateCategoryDTO";
 import { ICategory } from "../entities/ICategory";
 
 interface ICategoriesRepository {
@@ -11,6 +12,8 @@ interface ICategoriesRepository {
 	listByRestaurant(restaurantId: string): Promise<ICategory[]>;
 
 	delete(id: string): Promise<void>;
+
+	update(data: IUpdateCategoryDTO): Promise<ICategory>;
 }
 
 export { ICategoriesRepository };

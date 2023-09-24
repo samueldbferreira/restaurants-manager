@@ -1,5 +1,6 @@
 import { prisma } from "../../../../shared/infra/prisma";
 import { ICreateCategoryDTO } from "../../dtos/ICreateCategoryDTO";
+import { IUpdateCategoryDTO } from "../../dtos/IUpdateCategoryDTO";
 import { ICategory } from "../../entities/ICategory";
 import { ICategoriesRepository } from "../ICategoriesRepository";
 
@@ -54,6 +55,20 @@ class CategoriesRepositoryPrisma implements ICategoriesRepository {
 		await prisma.$transaction([deleteProducts, deleteCategory]);
 
 		return;
+	}
+
+	async update(data: IUpdateCategoryDTO): Promise<ICategory> {
+		const updatedCategory = await prisma.category.update({
+			where: {
+				id: data.categoryId,
+			},
+			data: {
+				name: data.name,
+				description: data.description,
+			},
+		});
+
+		return updatedCategory;
 	}
 }
 
