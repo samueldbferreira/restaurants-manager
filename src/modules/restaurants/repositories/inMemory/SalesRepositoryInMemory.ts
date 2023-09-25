@@ -21,6 +21,10 @@ class SalesRepositoryInMemory implements ISalesRepository {
 	async findByTitle(title: string): Promise<ISale | null> {
 		return this.sales.find((s) => s.title === title) || null;
 	}
+
+	async findById(id: string): Promise<ISale | null> {
+		return this.sales.find((s) => s.id === id) || null;
+	}
 }
 
 export { SalesRepositoryInMemory };

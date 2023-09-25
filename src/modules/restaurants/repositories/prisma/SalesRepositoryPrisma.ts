@@ -21,6 +21,17 @@ class SalesRepositoryPrisma implements ISalesRepository {
 			},
 		});
 	}
+
+	async findById(id: string): Promise<ISale | null> {
+		return await prisma.sale.findUnique({
+			where: {
+				id,
+			},
+			include: {
+				Product: true,
+			},
+		});
+	}
 }
 
 export { SalesRepositoryPrisma };

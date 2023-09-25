@@ -5,6 +5,8 @@ interface ISalesRepository {
 	create(data: ICreateSaleDTO): Promise<ISale>;
 
 	findByTitle(title: string, restaurantId: string): Promise<ISale | null>;
+
+	findById(id: string): Promise<ISale | null>;
 }
 
 export { ISalesRepository };
