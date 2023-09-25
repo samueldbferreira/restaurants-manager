@@ -34,6 +34,7 @@ model Restaurant {
   createdAt DateTime   @default(now())
   Category  Category[]
   Product   Product[]
+  Sale      Sale[]
 }
 
 model Category {
@@ -54,5 +55,18 @@ model Product {
   categoryId   String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
   restaurantId String
+  sale         Sale?      @relation(fields: [saleId], references: [id])
+  saleId       String?
+  createdAt    DateTime   @default(now())
+}
+
+model Sale {
+  id           String     @id @default(uuid()) @map("_id")
+  title        String
+  description  String
+  discount     Float
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String
+  Product      Product[]
   createdAt    DateTime   @default(now())
 }
