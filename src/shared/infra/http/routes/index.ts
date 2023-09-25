@@ -16,6 +16,7 @@ import { UpdateCategoryController } from "../../../../modules/restaurants/useCas
 import { UpdateRestaurantController } from "../../../../modules/restaurants/useCases/updateRestaurant/UpdateRestaurantController";
 import { CreateSaleController } from "../../../../modules/restaurants/useCases/createSale/CreateSaleController";
 import { GetSaleController } from "../../../../modules/restaurants/useCases/getSale/GetSaleController";
+import { ListSalesController } from "../../../../modules/restaurants/useCases/listSales/ListSalesController";
 
 const routes = Router();
 
@@ -32,6 +33,7 @@ const updateCategoryController = new UpdateCategoryController();
 
 const createSaleController = new CreateSaleController();
 const getSaleController = new GetSaleController();
+const listSalesController = new ListSalesController();
 
 const createRestaurantController = new CreateRestaurantController();
 const getRestaurantController = new GetRestaurantController();
@@ -88,6 +90,8 @@ routes.get(
 	"/restaurants/:restaurantId/sales/:saleId",
 	getSaleController.handle
 );
+
+routes.get("/restaurants/:restaurantId/sales", listSalesController.handle);
 
 routes.post("/restaurants/:restaurantId/sales", createSaleController.handle);
 

@@ -7,6 +7,8 @@ interface ISalesRepository {
 	findByTitle(title: string, restaurantId: string): Promise<ISale | null>;
 
 	findById(id: string): Promise<ISale | null>;
+
+	list(restaurantId: string): Promise<ISale[]>;
 }
 
 export { ISalesRepository };

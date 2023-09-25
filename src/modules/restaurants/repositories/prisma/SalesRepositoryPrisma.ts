@@ -32,6 +32,14 @@ class SalesRepositoryPrisma implements ISalesRepository {
 			},
 		});
 	}
+
+	async list(restaurantId: string): Promise<ISale[]> {
+		return await prisma.sale.findMany({
+			where: {
+				restaurantId,
+			},
+		});
+	}
 }
 
 export { SalesRepositoryPrisma };
