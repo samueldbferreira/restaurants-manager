@@ -18,10 +18,12 @@ import { CreateSaleController } from "../../../../modules/restaurants/useCases/c
 import { GetSaleController } from "../../../../modules/restaurants/useCases/getSale/GetSaleController";
 import { ListSalesController } from "../../../../modules/restaurants/useCases/listSales/ListSalesController";
 import { CreateUserController } from "../../../../modules/users/useCases/createUser/CreateUserController";
+import { GetUserController } from "../../../../modules/users/useCases/getUser/GetUserController";
 
 const routes = Router();
 
 const createUserController = new CreateUserController();
+const getUserController = new GetUserController();
 
 const createProductController = new CreateProductController();
 const listProductsController = new ListProductsController();
@@ -43,6 +45,8 @@ const getRestaurantController = new GetRestaurantController();
 const listRestaurantsController = new ListRestaurantsController();
 const deleteRestaurantController = new DeleteRestaurantController();
 const updateRestaurantController = new UpdateRestaurantController();
+
+routes.get("/users/:userId", getUserController.handle);
 
 routes.post("/users", createUserController.handle);
 
