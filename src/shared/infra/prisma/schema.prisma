@@ -43,8 +43,8 @@ model Restaurant {
   Category  Category[]
   Product   Product[]
   Sale      Sale[]
-  User      User?      @relation(fields: [userId], references: [id])
-  userId    String?
+  User      User       @relation(fields: [userId], references: [id])
+  userId    String
 }
 
 model Category {

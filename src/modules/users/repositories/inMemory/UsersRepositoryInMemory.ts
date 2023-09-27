@@ -25,6 +25,12 @@ class UsersRepositoryInMemory implements IUsersRepository {
 	async findById(id: string): Promise<IUser | null> {
 		return this.users.find((u) => u.id === id) || null;
 	}
+
+	async delete(id: string): Promise<void> {
+		this.users = this.users.filter((u) => u.id !== id);
+
+		return;
+	}
 }
 
 export { UsersRepositoryInMemory };

@@ -19,8 +19,11 @@ import { GetSaleController } from "../../../../modules/restaurants/useCases/getS
 import { ListSalesController } from "../../../../modules/restaurants/useCases/listSales/ListSalesController";
 import { CreateUserController } from "../../../../modules/users/useCases/createUser/CreateUserController";
 import { GetUserController } from "../../../../modules/users/useCases/getUser/GetUserController";
+import { GetTokenController } from "../../../../modules/users/useCases/getToken/GetTokenController";
 
 const routes = Router();
+
+const getTokenController = new GetTokenController();
 
 const createUserController = new CreateUserController();
 const getUserController = new GetUserController();
@@ -45,6 +48,8 @@ const getRestaurantController = new GetRestaurantController();
 const listRestaurantsController = new ListRestaurantsController();
 const deleteRestaurantController = new DeleteRestaurantController();
 const updateRestaurantController = new UpdateRestaurantController();
+
+routes.post("/auth", getTokenController.handle);
 
 routes.get("/users/:userId", getUserController.handle);
 
