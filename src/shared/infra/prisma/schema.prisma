@@ -25,6 +25,14 @@ type Schedule {
   sat Day
 }
 
+model User {
+  id          String       @id @default(uuid()) @map("_id")
+  name        String
+  email       String       @unique
+  password    String
+  restaurants Restaurant[]
+}
+
 model Restaurant {
   id        String     @id @default(uuid()) @map("_id")
   photo     String?
@@ -35,6 +43,8 @@ model Restaurant {
   Category  Category[]
   Product   Product[]
   Sale      Sale[]
+  User      User?      @relation(fields: [userId], references: [id])
+  userId    String?
 }
 
 model Category {

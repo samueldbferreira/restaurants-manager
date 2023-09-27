@@ -3,6 +3,9 @@ import { RestaurantsRepositoryPrisma } from "../../modules/restaurants/repositor
 import { CategoriesRepositoryPrisma } from "../../modules/restaurants/repositories/prisma/CategoriesRepositoryPrisma";
 import { ProductsRepositoryPrisma } from "../../modules/restaurants/repositories/prisma/ProductsRepositoryPrisma";
 import { SalesRepositoryPrisma } from "../../modules/restaurants/repositories/prisma/SalesRepositoryPrisma";
+import { UsersRepositoryPrisma } from "../../modules/users/repositories/prisma/UsersRepositoryPrisma";
+
+container.registerSingleton("UsersRepository", UsersRepositoryPrisma);
 
 container.registerSingleton(
 	"RestaurantsRepository",
