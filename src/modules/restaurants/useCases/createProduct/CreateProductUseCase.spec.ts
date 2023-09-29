@@ -1,4 +1,8 @@
+import "reflect-metadata";
 import { AppError } from "../../../../shared/errors/AppError";
+import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
+import { UsersRepositoryInMemory } from "../../../users/repositories/inMemory/UsersRepositoryInMemory";
+import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase";
 import { ICategoriesRepository } from "../../repositories/ICategoriesRepository";
 import { IProductsRepository } from "../../repositories/IProductsRepository";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
@@ -10,6 +14,8 @@ import { CreateRestaurantUseCase } from "../createRestaurant/CreateRestaurantUse
 import { CreateProductUseCase } from "./CreateProductUseCase";
 
 describe("Create Product", () => {
+	let usersRepository: IUsersRepository;
+	let createUserUseCase: CreateUserUseCase;
 	let restaurantsRepository: IRestaurantsRepository;
 	let createRestaurantUseCase: CreateRestaurantUseCase;
 	let categoriesRepository: ICategoriesRepository;
@@ -18,6 +24,8 @@ describe("Create Product", () => {
 	let createProductUseCase: CreateProductUseCase;
 
 	beforeEach(() => {
+		usersRepository = new UsersRepositoryInMemory();
+		createUserUseCase = new CreateUserUseCase(usersRepository);
 		restaurantsRepository = new RestaurantsRepositoryInMemory();
 		createRestaurantUseCase = new CreateRestaurantUseCase(
 			restaurantsRepository
@@ -37,6 +45,12 @@ describe("Create Product", () => {
 	});
 
 	it("should be able to create a new product", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
+
 		const restaurant = await createRestaurantUseCase.execute({
 			name: "restaurant name",
 			address: "restaurant address",
@@ -70,6 +84,7 @@ describe("Create Product", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		const category = await createCategoryUseCase.execute({
@@ -90,6 +105,12 @@ describe("Create Product", () => {
 
 	it("should not be able to create a new product for a non-existing restaurant", () => {
 		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
 			const restaurant = await createRestaurantUseCase.execute({
 				name: "restaurant name",
 				address: "restaurant address",
@@ -123,6 +144,7 @@ describe("Create Product", () => {
 						end: "18:00",
 					},
 				},
+				userId: user.id,
 			});
 
 			const category = await createCategoryUseCase.execute({
@@ -142,6 +164,12 @@ describe("Create Product", () => {
 
 	it("should not be able to create a new product for a non-existing category", () => {
 		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
 			const restaurant = await createRestaurantUseCase.execute({
 				name: "restaurant name",
 				address: "restaurant address",
@@ -175,6 +203,7 @@ describe("Create Product", () => {
 						end: "18:00",
 					},
 				},
+				userId: user.id,
 			});
 
 			await createCategoryUseCase.execute({
@@ -194,6 +223,12 @@ describe("Create Product", () => {
 
 	it("should not be able to create a new product for a category that does not belong to the restaurant received as a parameter.", () => {
 		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
 			const restaurant1 = await createRestaurantUseCase.execute({
 				name: "restaurant 1",
 				address: "restaurant address",
@@ -227,6 +262,7 @@ describe("Create Product", () => {
 						end: "18:00",
 					},
 				},
+				userId: user.id,
 			});
 
 			const categoryRestaurant1 = await createCategoryUseCase.execute({
@@ -268,6 +304,7 @@ describe("Create Product", () => {
 						end: "18:00",
 					},
 				},
+				userId: user.id,
 			});
 
 			const categoryRestaurant2 = await createCategoryUseCase.execute({

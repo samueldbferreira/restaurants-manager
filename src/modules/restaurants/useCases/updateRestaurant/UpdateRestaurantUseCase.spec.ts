@@ -1,4 +1,8 @@
+import "reflect-metadata";
 import { AppError } from "../../../../shared/errors/AppError";
+import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
+import { UsersRepositoryInMemory } from "../../../users/repositories/inMemory/UsersRepositoryInMemory";
+import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
 import { RestaurantsRepositoryInMemory } from "../../repositories/inMemory/RestaurantsRepositoryInMemory";
 import { CreateRestaurantUseCase } from "../createRestaurant/CreateRestaurantUseCase";
@@ -6,12 +10,16 @@ import { GetRestaurantUseCase } from "../getRestaurant/GetRestaurantUseCase";
 import { UpdateRestaurantUseCase } from "./UpdateRestaurantUseCase";
 
 describe("Update Restaurant", () => {
+	let usersRepository: IUsersRepository;
+	let createUserUseCase: CreateUserUseCase;
 	let restaurantsRepository: IRestaurantsRepository;
 	let createRestaurantUseCase: CreateRestaurantUseCase;
 	let updateRestaurantUseCase: UpdateRestaurantUseCase;
 	let getRestaurantUseCase: GetRestaurantUseCase;
 
 	beforeEach(() => {
+		usersRepository = new UsersRepositoryInMemory();
+		createUserUseCase = new CreateUserUseCase(usersRepository);
 		restaurantsRepository = new RestaurantsRepositoryInMemory();
 		createRestaurantUseCase = new CreateRestaurantUseCase(
 			restaurantsRepository
@@ -23,6 +31,12 @@ describe("Update Restaurant", () => {
 	});
 
 	it("should be able to update a restaurant", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
+
 		const restaurant = await createRestaurantUseCase.execute({
 			name: "restaurant name",
 			address: "restaurant address",
@@ -56,6 +70,7 @@ describe("Update Restaurant", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		const updateData = {
@@ -143,6 +158,12 @@ describe("Update Restaurant", () => {
 
 	it("should not be able to update a restaurant name to an already in use one", () => {
 		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
 			const restaurant1 = await createRestaurantUseCase.execute({
 				name: "restaurant 1",
 				address: "restaurant address",
@@ -176,6 +197,7 @@ describe("Update Restaurant", () => {
 						end: "18:00",
 					},
 				},
+				userId: user.id,
 			});
 
 			const restaurant2 = await createRestaurantUseCase.execute({
@@ -211,6 +233,7 @@ describe("Update Restaurant", () => {
 						end: "18:00",
 					},
 				},
+				userId: user.id,
 			});
 
 			await updateRestaurantUseCase.execute({

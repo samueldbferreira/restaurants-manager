@@ -1,4 +1,8 @@
+import "reflect-metadata";
 import { AppError } from "../../../../shared/errors/AppError";
+import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
+import { UsersRepositoryInMemory } from "../../../users/repositories/inMemory/UsersRepositoryInMemory";
+import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
 import { ISalesRepository } from "../../repositories/ISalesRepository";
 import { RestaurantsRepositoryInMemory } from "../../repositories/inMemory/RestaurantsRepositoryInMemory";
@@ -7,12 +11,16 @@ import { CreateRestaurantUseCase } from "../createRestaurant/CreateRestaurantUse
 import { CreateSaleUseCase } from "./CreateSaleUseCase";
 
 describe("Create Sale", () => {
+	let usersRepository: IUsersRepository;
+	let createUserUseCase: CreateUserUseCase;
 	let restaurantsRepository: IRestaurantsRepository;
 	let createRestaurantUseCase: CreateRestaurantUseCase;
 	let salesRepository: ISalesRepository;
 	let createSaleUseCase: CreateSaleUseCase;
 
 	beforeEach(() => {
+		usersRepository = new UsersRepositoryInMemory();
+		createUserUseCase = new CreateUserUseCase(usersRepository);
 		restaurantsRepository = new RestaurantsRepositoryInMemory();
 		createRestaurantUseCase = new CreateRestaurantUseCase(
 			restaurantsRepository
@@ -25,6 +33,12 @@ describe("Create Sale", () => {
 	});
 
 	it("should be able to create a new sale", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
+
 		const restaurant = await createRestaurantUseCase.execute({
 			name: "Restaurant",
 			address: "Restaurant",
@@ -58,6 +72,7 @@ describe("Create Sale", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		const sale = await createSaleUseCase.execute({
@@ -83,6 +98,12 @@ describe("Create Sale", () => {
 
 	it("should not be able to create a new sale with an already in use name for a restaurant", () => {
 		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
 			const restaurant = await createRestaurantUseCase.execute({
 				name: "Restaurant",
 				address: "Restaurant",
@@ -116,6 +137,7 @@ describe("Create Sale", () => {
 						end: "18:00",
 					},
 				},
+				userId: user.id,
 			});
 
 			await createSaleUseCase.execute({

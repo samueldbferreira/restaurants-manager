@@ -1,4 +1,8 @@
+import "reflect-metadata";
 import { AppError } from "../../../../shared/errors/AppError";
+import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
+import { UsersRepositoryInMemory } from "../../../users/repositories/inMemory/UsersRepositoryInMemory";
+import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
 import { ISalesRepository } from "../../repositories/ISalesRepository";
 import { RestaurantsRepositoryInMemory } from "../../repositories/inMemory/RestaurantsRepositoryInMemory";
@@ -8,6 +12,8 @@ import { CreateSaleUseCase } from "../createSale/CreateSaleUseCase";
 import { GetSaleUseCase } from "./GetSaleUseCase";
 
 describe("Get Sale", () => {
+	let usersRepository: IUsersRepository;
+	let createUserUseCase: CreateUserUseCase;
 	let restaurantsRepository: IRestaurantsRepository;
 	let createRestaurantUseCase: CreateRestaurantUseCase;
 	let salesRepository: ISalesRepository;
@@ -15,6 +21,8 @@ describe("Get Sale", () => {
 	let getSaleUseCase: GetSaleUseCase;
 
 	beforeEach(() => {
+		usersRepository = new UsersRepositoryInMemory();
+		createUserUseCase = new CreateUserUseCase(usersRepository);
 		restaurantsRepository = new RestaurantsRepositoryInMemory();
 		createRestaurantUseCase = new CreateRestaurantUseCase(
 			restaurantsRepository
@@ -28,6 +36,12 @@ describe("Get Sale", () => {
 	});
 
 	it("should be able to get a sale", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
+
 		const restaurant = await createRestaurantUseCase.execute({
 			name: "Restaurant",
 			address: "Restaurant",
@@ -61,6 +75,7 @@ describe("Get Sale", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		const sale = await createSaleUseCase.execute({

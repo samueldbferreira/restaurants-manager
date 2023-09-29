@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { AppError } from "../../../../shared/errors/AppError";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
 import { RestaurantsRepositoryInMemory } from "../../repositories/inMemory/RestaurantsRepositoryInMemory";
@@ -7,8 +8,13 @@ import { CategoriesRepositoryInMemory } from "../../repositories/inMemory/Catego
 import { CreateCategoryUseCase } from "../createCategory/CreateCategoryUseCase";
 import { DeleteCategoryUseCase } from "./DeleteCategoryUseCase";
 import { ListCategoriesUseCase } from "../listCategories/ListCategoriesUseCase";
+import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
+import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase";
+import { UsersRepositoryInMemory } from "../../../users/repositories/inMemory/UsersRepositoryInMemory";
 
 describe("Delete Category", () => {
+	let usersRepository: IUsersRepository;
+	let createUserUseCase: CreateUserUseCase;
 	let restaurantsRepository: IRestaurantsRepository;
 	let createRestaurantUseCase: CreateRestaurantUseCase;
 	let categoriesRepository: ICategoriesRepository;
@@ -17,6 +23,8 @@ describe("Delete Category", () => {
 	let listCategoriesUseCase: ListCategoriesUseCase;
 
 	beforeEach(() => {
+		usersRepository = new UsersRepositoryInMemory();
+		createUserUseCase = new CreateUserUseCase(usersRepository);
 		restaurantsRepository = new RestaurantsRepositoryInMemory();
 		createRestaurantUseCase = new CreateRestaurantUseCase(
 			restaurantsRepository
@@ -34,6 +42,12 @@ describe("Delete Category", () => {
 	});
 
 	it("should be able to delete a category", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
+
 		const restaurant = await createRestaurantUseCase.execute({
 			name: "restaurant",
 			address: "restaurant address",
@@ -67,6 +81,7 @@ describe("Delete Category", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		const category1 = await createCategoryUseCase.execute({

@@ -1,4 +1,8 @@
+import "reflect-metadata";
 import { AppError } from "../../../../shared/errors/AppError";
+import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
+import { UsersRepositoryInMemory } from "../../../users/repositories/inMemory/UsersRepositoryInMemory";
+import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase";
 import { ICategoriesRepository } from "../../repositories/ICategoriesRepository";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
 import { CategoriesRepositoryInMemory } from "../../repositories/inMemory/CategoriesRepositoryInMemory";
@@ -8,6 +12,8 @@ import { CreateRestaurantUseCase } from "../createRestaurant/CreateRestaurantUse
 import { UpdateCategoryUseCase } from "./UpdateCategoryUseCase";
 
 describe("Update Category", () => {
+	let usersRepository: IUsersRepository;
+	let createUserUseCase: CreateUserUseCase;
 	let restaurantsRepository: IRestaurantsRepository;
 	let createRestaurantUseCase: CreateRestaurantUseCase;
 	let categoriesRepository: ICategoriesRepository;
@@ -15,6 +21,8 @@ describe("Update Category", () => {
 	let updateCategoryUseCase: UpdateCategoryUseCase;
 
 	beforeEach(() => {
+		usersRepository = new UsersRepositoryInMemory();
+		createUserUseCase = new CreateUserUseCase(usersRepository);
 		restaurantsRepository = new RestaurantsRepositoryInMemory();
 		createRestaurantUseCase = new CreateRestaurantUseCase(
 			restaurantsRepository
@@ -31,6 +39,12 @@ describe("Update Category", () => {
 	});
 
 	it("should be able to update a category", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
+
 		const restaurant = await createRestaurantUseCase.execute({
 			name: "restaurant",
 			address: "restaurant address",
@@ -64,6 +78,7 @@ describe("Update Category", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		const category = await createCategoryUseCase.execute({
@@ -86,6 +101,12 @@ describe("Update Category", () => {
 
 	it("should not be able to update a category sending an invalid restaurant ID.", () => {
 		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
 			const restaurant = await createRestaurantUseCase.execute({
 				name: "restaurant",
 				address: "restaurant address",
@@ -119,6 +140,7 @@ describe("Update Category", () => {
 						end: "18:00",
 					},
 				},
+				userId: user.id,
 			});
 
 			const category = await createCategoryUseCase.execute({
@@ -140,6 +162,12 @@ describe("Update Category", () => {
 
 	it("should not be able to update a non-existing category", () => {
 		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
 			const restaurant = await createRestaurantUseCase.execute({
 				name: "restaurant",
 				address: "restaurant address",
@@ -173,6 +201,7 @@ describe("Update Category", () => {
 						end: "18:00",
 					},
 				},
+				userId: user.id,
 			});
 
 			await updateCategoryUseCase.execute({
@@ -186,6 +215,12 @@ describe("Update Category", () => {
 
 	it("should not be able to update a category that does not belong to the restaurant received as a parameter.", () => {
 		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
 			const restaurant1 = await createRestaurantUseCase.execute({
 				name: "restaurant 1",
 				address: "restaurant address",
@@ -219,6 +254,7 @@ describe("Update Category", () => {
 						end: "18:00",
 					},
 				},
+				userId: user.id,
 			});
 
 			const restaurant2 = await createRestaurantUseCase.execute({
@@ -254,6 +290,7 @@ describe("Update Category", () => {
 						end: "18:00",
 					},
 				},
+				userId: user.id,
 			});
 
 			const category = await createCategoryUseCase.execute({
@@ -273,6 +310,12 @@ describe("Update Category", () => {
 
 	it("should not be able to update a category name to a already in use one", () => {
 		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
 			const restaurant = await createRestaurantUseCase.execute({
 				name: "restaurant",
 				address: "restaurant address",
@@ -306,6 +349,7 @@ describe("Update Category", () => {
 						end: "18:00",
 					},
 				},
+				userId: user.id,
 			});
 
 			const category1 = await createCategoryUseCase.execute({

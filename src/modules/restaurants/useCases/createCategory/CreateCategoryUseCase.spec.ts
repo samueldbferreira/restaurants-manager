@@ -6,14 +6,21 @@ import { RestaurantsRepositoryInMemory } from "../../repositories/inMemory/Resta
 import { CreateRestaurantUseCase } from "../createRestaurant/CreateRestaurantUseCase";
 import { CreateCategoryUseCase } from "./CreateCategoryUseCase";
 import { AppError } from "../../../../shared/errors/AppError";
+import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
+import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase";
+import { UsersRepositoryInMemory } from "../../../users/repositories/inMemory/UsersRepositoryInMemory";
 
 describe("Create Category", () => {
+	let usersRepository: IUsersRepository;
+	let createUserUseCase: CreateUserUseCase;
 	let categoriesRepository: ICategoriesRepository;
 	let restaurantsRepository: IRestaurantsRepository;
 	let createRestaurantUseCase: CreateRestaurantUseCase;
 	let createCategoryUseCase: CreateCategoryUseCase;
 
 	beforeEach(() => {
+		usersRepository = new UsersRepositoryInMemory();
+		createUserUseCase = new CreateUserUseCase(usersRepository);
 		categoriesRepository = new CategoriesRepositoryInMemory();
 		restaurantsRepository = new RestaurantsRepositoryInMemory();
 		createRestaurantUseCase = new CreateRestaurantUseCase(
@@ -26,6 +33,12 @@ describe("Create Category", () => {
 	});
 
 	it("should be able to create a new category", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
+
 		const restaurant = await createRestaurantUseCase.execute({
 			name: "restaurant name",
 			address: "restaurant address",
@@ -59,6 +72,7 @@ describe("Create Category", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		const newCategory = await createCategoryUseCase.execute({
@@ -72,6 +86,12 @@ describe("Create Category", () => {
 
 	it("should not be able to create a category with an already existing name", () => {
 		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
 			const restaurant = await createRestaurantUseCase.execute({
 				name: "restaurant name",
 				address: "restaurant address",
@@ -105,6 +125,7 @@ describe("Create Category", () => {
 						end: "18:00",
 					},
 				},
+				userId: user.id,
 			});
 
 			await createCategoryUseCase.execute({

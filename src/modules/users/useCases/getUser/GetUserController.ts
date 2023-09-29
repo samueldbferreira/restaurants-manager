@@ -4,7 +4,7 @@ import { GetUserUseCase } from "./GetUserUseCase";
 
 class GetUserController {
 	async handle(req: Request, res: Response) {
-		const { userId } = req.params;
+		const userId = req.userId;
 
 		const getUserUseCase = container.resolve(GetUserUseCase);
 

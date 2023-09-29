@@ -9,6 +9,7 @@ interface IConstructor {
 	photo?: string;
 	schedule: ISchedule;
 	createdAt?: Date;
+	userId: string;
 }
 
 class Restaurant implements IRestaurant {
@@ -18,6 +19,7 @@ class Restaurant implements IRestaurant {
 	photo: string | null;
 	schedule: ISchedule;
 	createdAt: Date;
+	userId: string;
 
 	constructor(data: IConstructor) {
 		if (data.id) {
@@ -36,6 +38,7 @@ class Restaurant implements IRestaurant {
 		this.address = data.address;
 		this.photo = data.photo || null;
 		this.schedule = data.schedule;
+		this.userId = data.userId;
 	}
 }
 

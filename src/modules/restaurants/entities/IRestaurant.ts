@@ -7,6 +7,7 @@ interface IRestaurant {
 	photo: string | null;
 	schedule: ISchedule;
 	createdAt: Date;
+	userId: string;
 }
 
 export { IRestaurant };

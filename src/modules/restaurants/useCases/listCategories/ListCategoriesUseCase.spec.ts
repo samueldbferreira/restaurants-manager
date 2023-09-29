@@ -7,8 +7,13 @@ import { CreateCategoryUseCase } from "../createCategory/CreateCategoryUseCase";
 import { CreateRestaurantUseCase } from "../createRestaurant/CreateRestaurantUseCase";
 import { ListCategoriesUseCase } from "./ListCategoriesUseCase";
 import { AppError } from "../../../../shared/errors/AppError";
+import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
+import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase";
+import { UsersRepositoryInMemory } from "../../../users/repositories/inMemory/UsersRepositoryInMemory";
 
 describe("List Categories", () => {
+	let usersRepository: IUsersRepository;
+	let createUserUseCase: CreateUserUseCase;
 	let restaurantsRepository: IRestaurantsRepository;
 	let categoriesRepository: ICategoriesRepository;
 	let createRestaurantUseCase: CreateRestaurantUseCase;
@@ -16,6 +21,8 @@ describe("List Categories", () => {
 	let listCategoriesUseCase: ListCategoriesUseCase;
 
 	beforeEach(() => {
+		usersRepository = new UsersRepositoryInMemory();
+		createUserUseCase = new CreateUserUseCase(usersRepository);
 		restaurantsRepository = new RestaurantsRepositoryInMemory();
 		categoriesRepository = new CategoriesRepositoryInMemory();
 		createRestaurantUseCase = new CreateRestaurantUseCase(
@@ -32,6 +39,12 @@ describe("List Categories", () => {
 	});
 
 	it("should be able to list the categories of a restaurant", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
+
 		const restaurant = await createRestaurantUseCase.execute({
 			name: "restaurant name",
 			address: "restaurant address",
@@ -65,6 +78,7 @@ describe("List Categories", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		const restaurant2 = await createRestaurantUseCase.execute({
@@ -100,6 +114,7 @@ describe("List Categories", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		await createCategoryUseCase.execute({

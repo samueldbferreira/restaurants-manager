@@ -3,13 +3,20 @@ import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepositor
 import { RestaurantsRepositoryInMemory } from "../../repositories/inMemory/RestaurantsRepositoryInMemory";
 import { CreateRestaurantUseCase } from "../createRestaurant/CreateRestaurantUseCase";
 import { ListRestaurantsUseCase } from "./ListRestaurantsUseCase";
+import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
+import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase";
+import { UsersRepositoryInMemory } from "../../../users/repositories/inMemory/UsersRepositoryInMemory";
 
 describe("List Restaurants", () => {
+	let usersRepository: IUsersRepository;
+	let createUserUseCase: CreateUserUseCase;
 	let restaurantsRepository: IRestaurantsRepository;
 	let createRestaurantUseCase: CreateRestaurantUseCase;
 	let listRestaurantsUseCase: ListRestaurantsUseCase;
 
 	beforeEach(() => {
+		usersRepository = new UsersRepositoryInMemory();
+		createUserUseCase = new CreateUserUseCase(usersRepository);
 		restaurantsRepository = new RestaurantsRepositoryInMemory();
 		createRestaurantUseCase = new CreateRestaurantUseCase(
 			restaurantsRepository
@@ -18,6 +25,12 @@ describe("List Restaurants", () => {
 	});
 
 	it("should be able to list all the available restaurants", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
+
 		await createRestaurantUseCase.execute({
 			name: "restaurant name",
 			address: "restaurant address",
@@ -51,6 +64,7 @@ describe("List Restaurants", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		await createRestaurantUseCase.execute({
@@ -86,6 +100,7 @@ describe("List Restaurants", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		await createRestaurantUseCase.execute({
@@ -121,6 +136,7 @@ describe("List Restaurants", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		const restaurants = await listRestaurantsUseCase.execute();

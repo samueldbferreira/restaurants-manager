@@ -8,6 +8,7 @@ interface IRequest {
 	photo?: string;
 	address: string;
 	schedule: ISchedule;
+	userId: string;
 }
 
 @injectable()

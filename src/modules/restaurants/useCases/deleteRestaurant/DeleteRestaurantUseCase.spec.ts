@@ -1,4 +1,8 @@
+import "reflect-metadata";
 import { AppError } from "../../../../shared/errors/AppError";
+import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
+import { UsersRepositoryInMemory } from "../../../users/repositories/inMemory/UsersRepositoryInMemory";
+import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
 import { RestaurantsRepositoryInMemory } from "../../repositories/inMemory/RestaurantsRepositoryInMemory";
 import { CreateRestaurantUseCase } from "../createRestaurant/CreateRestaurantUseCase";
@@ -6,12 +10,16 @@ import { ListRestaurantsUseCase } from "../listRestaurants/ListRestaurantsUseCas
 import { DeleteRestaurantUseCase } from "./DeleteRestaurantUseCase";
 
 describe("Delete Restaurant", () => {
+	let usersRepository: IUsersRepository;
+	let createUserUseCase: CreateUserUseCase;
 	let restaurantsRepository: IRestaurantsRepository;
 	let createRestaurantUseCase: CreateRestaurantUseCase;
 	let deleteRestaurantUseCase: DeleteRestaurantUseCase;
 	let listRestaurantsUseCase: ListRestaurantsUseCase;
 
 	beforeEach(() => {
+		usersRepository = new UsersRepositoryInMemory();
+		createUserUseCase = new CreateUserUseCase(usersRepository);
 		restaurantsRepository = new RestaurantsRepositoryInMemory();
 		createRestaurantUseCase = new CreateRestaurantUseCase(
 			restaurantsRepository
@@ -23,6 +31,12 @@ describe("Delete Restaurant", () => {
 	});
 
 	it("should be able to delete a restaurant", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
+
 		const restaurant1 = await createRestaurantUseCase.execute({
 			name: "restaurant name 1",
 			address: "restaurant address",
@@ -56,6 +70,7 @@ describe("Delete Restaurant", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		const restaurant2 = await createRestaurantUseCase.execute({
@@ -91,6 +106,7 @@ describe("Delete Restaurant", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		await deleteRestaurantUseCase.execute(restaurant2.id);

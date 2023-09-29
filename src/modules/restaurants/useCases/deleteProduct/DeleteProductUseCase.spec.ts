@@ -1,4 +1,8 @@
+import "reflect-metadata";
 import { AppError } from "../../../../shared/errors/AppError";
+import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
+import { UsersRepositoryInMemory } from "../../../users/repositories/inMemory/UsersRepositoryInMemory";
+import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase";
 import { ICategoriesRepository } from "../../repositories/ICategoriesRepository";
 import { IProductsRepository } from "../../repositories/IProductsRepository";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
@@ -12,6 +16,8 @@ import { ListProductsUseCase } from "../listProducts/ListProductsUseCase";
 import { DeleteProductUseCase } from "./DeleteProductUseCase";
 
 describe("Delete Product", () => {
+	let usersRepository: IUsersRepository;
+	let createUserUseCase: CreateUserUseCase;
 	let restaurantsRepository: IRestaurantsRepository;
 	let createRestaurantUseCase: CreateRestaurantUseCase;
 	let categoriesRepository: ICategoriesRepository;
@@ -22,6 +28,8 @@ describe("Delete Product", () => {
 	let listProductsUseCase: ListProductsUseCase;
 
 	beforeEach(() => {
+		usersRepository = new UsersRepositoryInMemory();
+		createUserUseCase = new CreateUserUseCase(usersRepository);
 		restaurantsRepository = new RestaurantsRepositoryInMemory();
 		createRestaurantUseCase = new CreateRestaurantUseCase(
 			restaurantsRepository
@@ -45,6 +53,12 @@ describe("Delete Product", () => {
 	});
 
 	it("should be able to delete a product", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
+
 		const restaurant = await createRestaurantUseCase.execute({
 			name: "restaurant",
 			address: "restaurant address",
@@ -78,6 +92,7 @@ describe("Delete Product", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		const category = await createCategoryUseCase.execute({

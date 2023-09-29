@@ -1,4 +1,8 @@
+import "reflect-metadata";
 import { AppError } from "../../../../shared/errors/AppError";
+import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
+import { UsersRepositoryInMemory } from "../../../users/repositories/inMemory/UsersRepositoryInMemory";
+import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase";
 import { ICategoriesRepository } from "../../repositories/ICategoriesRepository";
 import { IProductsRepository } from "../../repositories/IProductsRepository";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
@@ -11,6 +15,8 @@ import { CreateRestaurantUseCase } from "../createRestaurant/CreateRestaurantUse
 import { GetProductUseCase } from "./GetProductUseCase";
 
 describe("Get Product", () => {
+	let usersRepository: IUsersRepository;
+	let createUserUseCase: CreateUserUseCase;
 	let restaurantsRepository: IRestaurantsRepository;
 	let categoriesRepository: ICategoriesRepository;
 	let productsRepository: IProductsRepository;
@@ -20,6 +26,8 @@ describe("Get Product", () => {
 	let getProductUseCase: GetProductUseCase;
 
 	beforeEach(() => {
+		usersRepository = new UsersRepositoryInMemory();
+		createUserUseCase = new CreateUserUseCase(usersRepository);
 		restaurantsRepository = new RestaurantsRepositoryInMemory();
 		categoriesRepository = new CategoriesRepositoryInMemory();
 		productsRepository = new ProductsRepositoryInMemory();
@@ -40,6 +48,12 @@ describe("Get Product", () => {
 	});
 
 	it("should be able to get a product", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
+
 		const restaurant = await createRestaurantUseCase.execute({
 			name: "restaurant name",
 			address: "restaurant address",
@@ -73,6 +87,7 @@ describe("Get Product", () => {
 					end: "18:00",
 				},
 			},
+			userId: user.id,
 		});
 
 		const category = await createCategoryUseCase.execute({
