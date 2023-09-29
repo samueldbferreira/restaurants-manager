@@ -1,6 +1,7 @@
 import { prisma } from "../../../../shared/infra/prisma";
 import { RestaurantsRepositoryPrisma } from "../../../restaurants/repositories/prisma/RestaurantsRepositoryPrisma";
 import { ICreateUserDTO } from "../../dtos/ICreateUserDTO";
+import { IUpdateUserDTO } from "../../dtos/IUpdateUserDTO";
 import { IUser } from "../../entities/IUser";
 import { IUsersRepository } from "../IUsersRepository";
 
@@ -76,6 +77,21 @@ class UsersRepositoryPrisma implements IUsersRepository {
 		]);
 
 		return;
+	}
+
+	async update(data: IUpdateUserDTO): Promise<IUser> {
+		const updatedUser = await prisma.user.update({
+			where: {
+				id: data.id,
+			},
+			data: {
+				name: data.name,
+				email: data.email,
+				password: data.password,
+			},
+		});
+
+		return updatedUser;
 	}
 }
 

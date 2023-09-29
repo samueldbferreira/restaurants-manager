@@ -1,4 +1,5 @@
 import { ICreateUserDTO } from "../dtos/ICreateUserDTO";
+import { IUpdateUserDTO } from "../dtos/IUpdateUserDTO";
 import { IUser } from "../entities/IUser";
 
 interface IUsersRepository {
@@ -9,6 +10,8 @@ interface IUsersRepository {
 	findById(id: string): Promise<IUser | null>;
 
 	delete(id: string): Promise<void>;
+
+	update(data: IUpdateUserDTO): Promise<IUser>;
 }
 
 export { IUsersRepository };
