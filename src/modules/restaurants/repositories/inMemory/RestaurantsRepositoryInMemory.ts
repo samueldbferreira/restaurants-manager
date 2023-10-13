@@ -28,8 +28,8 @@ class RestaurantsRepositoryInMemory implements IRestaurantsRepository {
 		return newRestaurant;
 	}
 
-	async listAll(): Promise<IRestaurant[]> {
-		return this.restaurants;
+	async listAll(userId: string): Promise<IRestaurant[]> {
+		return this.restaurants.filter((r) => r.userId === userId);
 	}
 
 	async delete(id: string): Promise<void> {

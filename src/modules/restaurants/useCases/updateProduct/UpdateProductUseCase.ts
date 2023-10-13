@@ -5,12 +5,13 @@ import { IProductsRepository } from "../../repositories/IProductsRepository";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
 
 interface IRequest {
+	userId: string;
+	restaurantId: string;
 	productId: string;
 	photo?: string;
 	name?: string;
 	price?: number;
 	categoryId?: string;
-	restaurantId: string;
 }
 
 @injectable()
@@ -30,6 +31,10 @@ class UpdateProductUseCase {
 		);
 		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
+		}
+
+		if (restaurant.userId !== data.userId) {
+			throw new AppError("Restaurant does not belong to the user.");
 		}
 
 		const product = await this.productsRepository.findById(data.productId);

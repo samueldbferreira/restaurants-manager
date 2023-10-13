@@ -57,6 +57,14 @@ class UsersRepositoryPrisma implements IUsersRepository {
 			});
 		});
 
+		const deleteSales = restaurants.map((r) => {
+			return prisma.sale.deleteMany({
+				where: {
+					restaurantId: r.id,
+				},
+			});
+		});
+
 		const deleteRestaurants = prisma.restaurant.deleteMany({
 			where: {
 				userId: id,
@@ -72,6 +80,7 @@ class UsersRepositoryPrisma implements IUsersRepository {
 		await prisma.$transaction([
 			...deleteProducts,
 			...deleteCategories,
+			...deleteSales,
 			deleteRestaurants,
 			deleteUser,
 		]);

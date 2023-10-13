@@ -9,7 +9,7 @@ interface IRestaurantsRepository {
 
 	create(data: ICreateRestaurantDTO): Promise<IRestaurant>;
 
-	listAll(): Promise<IRestaurant[]>;
+	listAll(userId: string): Promise<IRestaurant[]>;
 
 	delete(id: string): Promise<void>;
 

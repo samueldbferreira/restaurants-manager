@@ -85,13 +85,15 @@ describe("Update Category", () => {
 			name: "Category",
 			description: "Category description",
 			restaurantId: restaurant.id,
+			userId: user.id,
 		});
 
 		const updateData = {
+			userId: user.id,
+			restaurantId: restaurant.id,
 			categoryId: category.id,
 			name: "New Name",
 			description: "New Description",
-			restaurantId: restaurant.id,
 		};
 
 		const updatedCategory = await updateCategoryUseCase.execute(updateData);
@@ -147,13 +149,84 @@ describe("Update Category", () => {
 				name: "Category",
 				description: "Category description",
 				restaurantId: restaurant.id,
+				userId: user.id,
 			});
 
 			const updateData = {
+				userId: user.id,
+				restaurantId: "invalid id",
 				categoryId: category.id,
 				name: "New Name",
 				description: "New Description",
+			};
+
+			await updateCategoryUseCase.execute(updateData);
+		}).rejects.toBeInstanceOf(AppError);
+	});
+
+	it("should not be able to update a category of a restaurant that does not belong to the user.", () => {
+		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
+			const user2 = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user2@email.com",
+				password: "password",
+			});
+
+			const restaurant = await createRestaurantUseCase.execute({
+				name: "restaurant",
+				address: "restaurant address",
+				schedule: {
+					sun: {
+						start: "08:00",
+						end: "18:00",
+					},
+					mon: {
+						start: "08:00",
+						end: "18:00",
+					},
+					tue: {
+						start: "08:00",
+						end: "18:00",
+					},
+					wed: {
+						start: "08:00",
+						end: "18:00",
+					},
+					thu: {
+						start: "08:00",
+						end: "18:00",
+					},
+					fri: {
+						start: "08:00",
+						end: "18:00",
+					},
+					sat: {
+						start: "08:00",
+						end: "18:00",
+					},
+				},
+				userId: user.id,
+			});
+
+			const category = await createCategoryUseCase.execute({
+				name: "Category",
+				description: "Category description",
+				restaurantId: restaurant.id,
+				userId: user.id,
+			});
+
+			const updateData = {
+				userId: user2.id,
 				restaurantId: "invalid id",
+				categoryId: category.id,
+				name: "New Name",
+				description: "New Description",
 			};
 
 			await updateCategoryUseCase.execute(updateData);
@@ -205,10 +278,11 @@ describe("Update Category", () => {
 			});
 
 			await updateCategoryUseCase.execute({
+				userId: user.id,
+				restaurantId: restaurant.id,
 				categoryId: "invalid id",
 				name: "New Name",
 				description: "New Description",
-				restaurantId: restaurant.id,
 			});
 		}).rejects.toBeInstanceOf(AppError);
 	});
@@ -297,13 +371,15 @@ describe("Update Category", () => {
 				name: "Category",
 				description: "Category description",
 				restaurantId: restaurant1.id,
+				userId: user.id,
 			});
 
 			await updateCategoryUseCase.execute({
+				userId: user.id,
+				restaurantId: restaurant2.id,
 				categoryId: category.id,
 				name: "New Name",
 				description: "New Description",
-				restaurantId: restaurant2.id,
 			});
 		}).rejects.toBeInstanceOf(AppError);
 	});
@@ -356,18 +432,21 @@ describe("Update Category", () => {
 				name: "Category 1",
 				description: "Category description",
 				restaurantId: restaurant.id,
+				userId: user.id,
 			});
 
 			const category2 = await createCategoryUseCase.execute({
 				name: "Category 2",
 				description: "Category description",
 				restaurantId: restaurant.id,
+				userId: user.id,
 			});
 
 			await updateCategoryUseCase.execute({
+				userId: user.id,
+				restaurantId: restaurant.id,
 				categoryId: category2.id,
 				name: "Category 1",
-				restaurantId: restaurant.id,
 			});
 		}).rejects.toBeInstanceOf(AppError);
 	});

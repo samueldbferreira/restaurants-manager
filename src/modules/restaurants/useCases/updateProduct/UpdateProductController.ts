@@ -4,18 +4,20 @@ import { UpdateProductUseCase } from "./UpdateProductUseCase";
 
 class UpdateProductController {
 	async handle(req: Request, res: Response) {
+		const userId = req.userId;
 		const { restaurantId, productId } = req.params;
 		const { photo, name, price, categoryId } = req.body;
 
 		const updateProductUseCase = container.resolve(UpdateProductUseCase);
 
 		const updatedProduct = await updateProductUseCase.execute({
+			userId,
+			restaurantId,
 			productId,
 			photo,
 			name,
 			price,
 			categoryId,
-			restaurantId,
 		});
 
 		res.status(200).json(updatedProduct);

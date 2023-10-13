@@ -4,11 +4,12 @@ import { DeleteProductUseCase } from "./DeleteProductUseCase";
 
 class DeleteProductController {
 	async handle(req: Request, res: Response) {
-		const { productId } = req.params;
+		const userId = req.userId;
+		const { restaurantId, productId } = req.params;
 
 		const deleteProductUseCase = container.resolve(DeleteProductUseCase);
 
-		await deleteProductUseCase.execute(productId);
+		await deleteProductUseCase.execute(userId, restaurantId, productId);
 
 		return res.status(204).send();
 	}

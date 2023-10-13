@@ -27,8 +27,12 @@ class RestaurantsRepositoryPrisma implements IRestaurantsRepository {
 		});
 	}
 
-	async listAll(): Promise<IRestaurant[]> {
-		return await prisma.restaurant.findMany();
+	async listAll(userId: string): Promise<IRestaurant[]> {
+		return await prisma.restaurant.findMany({
+			where: {
+				userId,
+			},
+		});
 	}
 
 	async delete(id: string): Promise<void> {

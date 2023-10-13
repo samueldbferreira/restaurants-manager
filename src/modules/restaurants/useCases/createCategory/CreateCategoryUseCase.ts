@@ -7,6 +7,7 @@ interface IRequest {
 	name: string;
 	description: string;
 	restaurantId: string;
+	userId: string;
 }
 
 @injectable()
@@ -19,6 +20,18 @@ class CreateCategoryUseCase {
 	) {}
 
 	async execute(data: IRequest) {
+		const restaurant = await this.restaurantsRepository.findById(
+			data.restaurantId
+		);
+		
+		if (!restaurant) {
+			throw new AppError("Invalid restaurant ID.");
+		}
+
+		if (restaurant.userId !== data.userId) {
+			throw new AppError("Restaurant does not belong to his user.");
+		}
+
 		const nameAlreadyExists = await this.categoriesRepository.findByName(
 			data.name,
 			data.restaurantId
@@ -27,14 +40,11 @@ class CreateCategoryUseCase {
 			throw new AppError("This category name is already in use.");
 		}
 
-		const restaurantExists = await this.restaurantsRepository.findById(
-			data.restaurantId
-		);
-		if (!restaurantExists) {
-			throw new AppError("Invalid restaurant ID.");
-		}
-
-		const newCategory = await this.categoriesRepository.create(data);
+		const newCategory = await this.categoriesRepository.create({
+			name: data.name,
+			description: data.description,
+			restaurantId: data.restaurantId,
+		});
 
 		return newCategory;
 	}

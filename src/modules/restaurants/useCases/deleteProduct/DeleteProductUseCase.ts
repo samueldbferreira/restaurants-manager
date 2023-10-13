@@ -1,22 +1,39 @@
 import { inject, injectable } from "tsyringe";
 import { AppError } from "../../../../shared/errors/AppError";
 import { IProductsRepository } from "../../repositories/IProductsRepository";
+import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
 
 @injectable()
 class DeleteProductUseCase {
 	constructor(
+		@inject("RestaurantsRepository")
+		private restaurantsRepository: IRestaurantsRepository,
 		@inject("ProductsRepository")
 		private productsRepository: IProductsRepository
 	) {}
 
-	async execute(productId: string) {
-		const productExists = await this.productsRepository.findById(productId);
+	async execute(userId: string, restaurantId: string, productId: string) {
+		const restaurant = await this.restaurantsRepository.findById(restaurantId);
 
-		if (!productExists) {
-			throw new AppError("Product does not exist.", 404);
-		} else {
-			await this.productsRepository.delete(productId);
+		if (!restaurant) {
+			throw new AppError("Invalid restaurant ID.");
 		}
+
+		if (restaurant.userId !== userId) {
+			throw new AppError("Restaurant does not belong to this user.");
+		}
+
+		const product = await this.productsRepository.findById(productId);
+
+		if (!product) {
+			throw new AppError("Product does not exist.", 404);
+		}
+
+		if (product.restaurantId !== restaurantId) {
+			throw new AppError("Product does not belong to this restaurant.");
+		}
+
+		await this.productsRepository.delete(productId);
 	}
 }
 

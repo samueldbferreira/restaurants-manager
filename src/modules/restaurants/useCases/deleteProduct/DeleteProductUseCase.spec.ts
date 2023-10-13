@@ -45,7 +45,10 @@ describe("Delete Product", () => {
 			categoriesRepository,
 			productsRepository
 		);
-		deleteProductUseCase = new DeleteProductUseCase(productsRepository);
+		deleteProductUseCase = new DeleteProductUseCase(
+			restaurantsRepository,
+			productsRepository
+		);
 		listProductsUseCase = new ListProductsUseCase(
 			restaurantsRepository,
 			productsRepository
@@ -99,6 +102,7 @@ describe("Delete Product", () => {
 			name: "Category",
 			description: "Category description",
 			restaurantId: restaurant.id,
+			userId: user.id,
 		});
 
 		const product1 = await createProductUseCase.execute({
@@ -106,6 +110,7 @@ describe("Delete Product", () => {
 			price: 24.75,
 			categoryId: category.id,
 			restaurantId: restaurant.id,
+			userId: user.id,
 		});
 
 		const product2 = await createProductUseCase.execute({
@@ -113,6 +118,7 @@ describe("Delete Product", () => {
 			price: 24.75,
 			categoryId: category.id,
 			restaurantId: restaurant.id,
+			userId: user.id,
 		});
 
 		const product3 = await createProductUseCase.execute({
@@ -120,20 +126,299 @@ describe("Delete Product", () => {
 			price: 24.75,
 			categoryId: category.id,
 			restaurantId: restaurant.id,
+			userId: user.id,
 		});
 
-		await deleteProductUseCase.execute(product2.id);
+		await deleteProductUseCase.execute(user.id, restaurant.id, product2.id);
 
 		const products = await listProductsUseCase.execute({
+			userId: user.id,
 			restaurantId: restaurant.id,
 		});
 
 		expect(products).toEqual([product1, product3]);
 	});
 
+	it("should not be able to delete a product of a inexistent restaurant", () => {
+		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
+			const restaurant = await createRestaurantUseCase.execute({
+				name: "restaurant",
+				address: "restaurant address",
+				schedule: {
+					sun: {
+						start: "08:00",
+						end: "18:00",
+					},
+					mon: {
+						start: "08:00",
+						end: "18:00",
+					},
+					tue: {
+						start: "08:00",
+						end: "18:00",
+					},
+					wed: {
+						start: "08:00",
+						end: "18:00",
+					},
+					thu: {
+						start: "08:00",
+						end: "18:00",
+					},
+					fri: {
+						start: "08:00",
+						end: "18:00",
+					},
+					sat: {
+						start: "08:00",
+						end: "18:00",
+					},
+				},
+				userId: user.id,
+			});
+
+			const category = await createCategoryUseCase.execute({
+				name: "Category",
+				description: "Category description",
+				restaurantId: restaurant.id,
+				userId: user.id,
+			});
+
+			const product = await createProductUseCase.execute({
+				name: "Product",
+				price: 24.75,
+				categoryId: category.id,
+				restaurantId: restaurant.id,
+				userId: user.id,
+			});
+
+			await deleteProductUseCase.execute(user.id, "invalid id", product.id);
+		}).rejects.toBeInstanceOf(AppError);
+	});
+
+	it("should not be able to delete a product of a restaurant that does not belong to the user", () => {
+		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
+			const user2 = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user2@email.com",
+				password: "password",
+			});
+
+			const restaurant = await createRestaurantUseCase.execute({
+				name: "restaurant",
+				address: "restaurant address",
+				schedule: {
+					sun: {
+						start: "08:00",
+						end: "18:00",
+					},
+					mon: {
+						start: "08:00",
+						end: "18:00",
+					},
+					tue: {
+						start: "08:00",
+						end: "18:00",
+					},
+					wed: {
+						start: "08:00",
+						end: "18:00",
+					},
+					thu: {
+						start: "08:00",
+						end: "18:00",
+					},
+					fri: {
+						start: "08:00",
+						end: "18:00",
+					},
+					sat: {
+						start: "08:00",
+						end: "18:00",
+					},
+				},
+				userId: user.id,
+			});
+
+			const category = await createCategoryUseCase.execute({
+				name: "Category",
+				description: "Category description",
+				restaurantId: restaurant.id,
+				userId: user.id,
+			});
+
+			const product = await createProductUseCase.execute({
+				name: "Product",
+				price: 24.75,
+				categoryId: category.id,
+				restaurantId: restaurant.id,
+				userId: user.id,
+			});
+
+			await deleteProductUseCase.execute(user2.id, restaurant.id, product.id);
+		}).rejects.toBeInstanceOf(AppError);
+	});
+
+	it("should not be able to delete a product that does not belong to the restaurant", () => {
+		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
+			const restaurant = await createRestaurantUseCase.execute({
+				name: "restaurant",
+				address: "restaurant address",
+				schedule: {
+					sun: {
+						start: "08:00",
+						end: "18:00",
+					},
+					mon: {
+						start: "08:00",
+						end: "18:00",
+					},
+					tue: {
+						start: "08:00",
+						end: "18:00",
+					},
+					wed: {
+						start: "08:00",
+						end: "18:00",
+					},
+					thu: {
+						start: "08:00",
+						end: "18:00",
+					},
+					fri: {
+						start: "08:00",
+						end: "18:00",
+					},
+					sat: {
+						start: "08:00",
+						end: "18:00",
+					},
+				},
+				userId: user.id,
+			});
+
+			const restaurant2 = await createRestaurantUseCase.execute({
+				name: "restaurant 2",
+				address: "restaurant address",
+				schedule: {
+					sun: {
+						start: "08:00",
+						end: "18:00",
+					},
+					mon: {
+						start: "08:00",
+						end: "18:00",
+					},
+					tue: {
+						start: "08:00",
+						end: "18:00",
+					},
+					wed: {
+						start: "08:00",
+						end: "18:00",
+					},
+					thu: {
+						start: "08:00",
+						end: "18:00",
+					},
+					fri: {
+						start: "08:00",
+						end: "18:00",
+					},
+					sat: {
+						start: "08:00",
+						end: "18:00",
+					},
+				},
+				userId: user.id,
+			});
+
+			const category = await createCategoryUseCase.execute({
+				name: "Category",
+				description: "Category description",
+				restaurantId: restaurant.id,
+				userId: user.id,
+			});
+
+			const product = await createProductUseCase.execute({
+				name: "Product",
+				price: 24.75,
+				categoryId: category.id,
+				restaurantId: restaurant.id,
+				userId: user.id,
+			});
+
+			await deleteProductUseCase.execute(user.id, restaurant2.id, product.id);
+		}).rejects.toBeInstanceOf(AppError);
+	});
+
 	it("should not be able to delete a non-existing product", () => {
 		expect(async () => {
-			await deleteProductUseCase.execute("invalid product id");
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
+			const restaurant = await createRestaurantUseCase.execute({
+				name: "restaurant",
+				address: "restaurant address",
+				schedule: {
+					sun: {
+						start: "08:00",
+						end: "18:00",
+					},
+					mon: {
+						start: "08:00",
+						end: "18:00",
+					},
+					tue: {
+						start: "08:00",
+						end: "18:00",
+					},
+					wed: {
+						start: "08:00",
+						end: "18:00",
+					},
+					thu: {
+						start: "08:00",
+						end: "18:00",
+					},
+					fri: {
+						start: "08:00",
+						end: "18:00",
+					},
+					sat: {
+						start: "08:00",
+						end: "18:00",
+					},
+				},
+				userId: user.id,
+			});
+
+			await deleteProductUseCase.execute(
+				user.id,
+				restaurant.id,
+				"invalid product id"
+			);
 		}).rejects.toBeInstanceOf(AppError);
 	});
 });

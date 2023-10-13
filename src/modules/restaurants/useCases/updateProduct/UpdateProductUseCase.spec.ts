@@ -51,7 +51,10 @@ describe("Update Product", () => {
 			categoriesRepository,
 			productsRepository
 		);
-		getProductUseCase = new GetProductUseCase(productsRepository);
+		getProductUseCase = new GetProductUseCase(
+			restaurantsRepository,
+			productsRepository
+		);
 	});
 
 	it("should be able to update a product", async () => {
@@ -101,6 +104,7 @@ describe("Update Product", () => {
 			name: "Category",
 			description: "Category description",
 			restaurantId: restaurant.id,
+			userId: user.id,
 		});
 
 		const product = await createProductUseCase.execute({
@@ -108,17 +112,23 @@ describe("Update Product", () => {
 			price: 24.75,
 			categoryId: category.id,
 			restaurantId: restaurant.id,
+			userId: user.id,
 		});
 
 		const updateData = {
+			userId: user.id,
+			restaurantId: product.restaurantId,
 			productId: product.id,
 			name: "New Name",
-			restaurantId: product.restaurantId,
 		};
 
 		await updateProductUseCase.execute(updateData);
 
-		const updatedProduct = await getProductUseCase.execute(product.id);
+		const updatedProduct = await getProductUseCase.execute(
+			user.id,
+			restaurant.id,
+			product.id
+		);
 
 		expect(updatedProduct).toEqual(Object.assign(product, updateData));
 	});
@@ -171,6 +181,7 @@ describe("Update Product", () => {
 				name: "Category",
 				description: "Category description",
 				restaurantId: restaurant.id,
+				userId: user.id,
 			});
 
 			const product = await createProductUseCase.execute({
@@ -178,13 +189,91 @@ describe("Update Product", () => {
 				price: 24.75,
 				categoryId: category.id,
 				restaurantId: restaurant.id,
+				userId: user.id,
 			});
 
 			await updateProductUseCase.execute({
+				userId: user.id,
+				restaurantId: "invalid id",
 				productId: product.id,
 				name: "New Name",
-				restaurantId: "invalid id",
 			});
+		}).rejects.toBeInstanceOf(AppError);
+	});
+
+	it("should not be able to update a product of a restaurant that does not belong to the user.", async () => {
+		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
+			const user2 = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user2@email.com",
+				password: "password",
+			});
+
+			const restaurant = await createRestaurantUseCase.execute({
+				name: "restaurant",
+				address: "restaurant address",
+				schedule: {
+					sun: {
+						start: "08:00",
+						end: "18:00",
+					},
+					mon: {
+						start: "08:00",
+						end: "18:00",
+					},
+					tue: {
+						start: "08:00",
+						end: "18:00",
+					},
+					wed: {
+						start: "08:00",
+						end: "18:00",
+					},
+					thu: {
+						start: "08:00",
+						end: "18:00",
+					},
+					fri: {
+						start: "08:00",
+						end: "18:00",
+					},
+					sat: {
+						start: "08:00",
+						end: "18:00",
+					},
+				},
+				userId: user.id,
+			});
+
+			const category = await createCategoryUseCase.execute({
+				name: "Category",
+				description: "Category description",
+				restaurantId: restaurant.id,
+				userId: user.id,
+			});
+
+			const product = await createProductUseCase.execute({
+				name: "Product",
+				price: 24.75,
+				categoryId: category.id,
+				restaurantId: restaurant.id,
+				userId: user.id,
+			});
+
+			const updateData = {
+				userId: user2.id,
+				restaurantId: product.restaurantId,
+				productId: product.id,
+				name: "New Name",
+			};
+
+			await updateProductUseCase.execute(updateData);
 		}).rejects.toBeInstanceOf(AppError);
 	});
 
@@ -233,9 +322,10 @@ describe("Update Product", () => {
 			});
 
 			await updateProductUseCase.execute({
+				userId: user.id,
+				restaurantId: restaurant.id,
 				productId: "invalid id",
 				name: "New Name",
-				restaurantId: restaurant.id,
 			});
 		}).rejects.toBeInstanceOf(AppError);
 	});
@@ -324,6 +414,7 @@ describe("Update Product", () => {
 				name: "Category",
 				description: "Category description",
 				restaurantId: restaurant1.id,
+				userId: user.id,
 			});
 
 			const product = await createProductUseCase.execute({
@@ -331,12 +422,14 @@ describe("Update Product", () => {
 				price: 24.75,
 				categoryId: category.id,
 				restaurantId: restaurant1.id,
+				userId: user.id,
 			});
 
 			await updateProductUseCase.execute({
+				userId: user.id,
+				restaurantId: restaurant2.id,
 				productId: product.id,
 				name: "New Name",
-				restaurantId: restaurant2.id,
 			});
 		}).rejects.toBeInstanceOf(AppError);
 	});
@@ -389,13 +482,15 @@ describe("Update Product", () => {
 				name: "Category",
 				description: "Category description",
 				restaurantId: restaurant.id,
+				userId: user.id,
 			});
 
-			const product1 = await createProductUseCase.execute({
+			await createProductUseCase.execute({
 				name: "Product 1",
 				price: 24.75,
 				categoryId: category.id,
 				restaurantId: restaurant.id,
+				userId: user.id,
 			});
 
 			const product2 = await createProductUseCase.execute({
@@ -403,12 +498,14 @@ describe("Update Product", () => {
 				price: 30.75,
 				categoryId: category.id,
 				restaurantId: restaurant.id,
+				userId: user.id,
 			});
 
 			await updateProductUseCase.execute({
+				userId: user.id,
+				restaurantId: restaurant.id,
 				productId: product2.id,
 				name: "Product 1",
-				restaurantId: restaurant.id,
 			});
 		}).rejects.toBeInstanceOf(AppError);
 	});
@@ -461,6 +558,7 @@ describe("Update Product", () => {
 				name: "Category",
 				description: "Category description",
 				restaurantId: restaurant.id,
+				userId: user.id,
 			});
 
 			const product = await createProductUseCase.execute({
@@ -468,13 +566,15 @@ describe("Update Product", () => {
 				price: 24.75,
 				categoryId: category.id,
 				restaurantId: restaurant.id,
+				userId: user.id,
 			});
 
 			await updateProductUseCase.execute({
+				userId: user.id,
+				restaurantId: restaurant.id,
 				productId: product.id,
 				name: "New Name",
 				categoryId: "invalid id",
-				restaurantId: restaurant.id,
 			});
 		}).rejects.toBeInstanceOf(AppError);
 	});
@@ -527,6 +627,7 @@ describe("Update Product", () => {
 				name: "Category Restaurant 1",
 				description: "Category description",
 				restaurantId: restaurant1.id,
+				userId: user.id,
 			});
 
 			const restaurant2 = await createRestaurantUseCase.execute({
@@ -569,6 +670,7 @@ describe("Update Product", () => {
 				name: "Category Restaurant 2",
 				description: "Category description",
 				restaurantId: restaurant2.id,
+				userId: user.id,
 			});
 
 			const product = await createProductUseCase.execute({
@@ -576,13 +678,15 @@ describe("Update Product", () => {
 				price: 24.75,
 				categoryId: category1.id,
 				restaurantId: restaurant1.id,
+				userId: user.id,
 			});
 
 			await updateProductUseCase.execute({
+				userId: user.id,
+				restaurantId: restaurant1.id,
 				productId: product.id,
 				name: "New Name",
 				categoryId: category2.id,
-				restaurantId: restaurant1.id,
 			});
 		}).rejects.toBeInstanceOf(AppError);
 	});

@@ -4,6 +4,7 @@ import { CreateProductUseCase } from "./CreateProductUseCase";
 
 class CreateProductController {
 	async handle(req: Request, res: Response) {
+		const userId = req.userId;
 		const { restaurantId } = req.params;
 		const { name, photo, price, categoryId } = req.body;
 
@@ -15,6 +16,7 @@ class CreateProductController {
 			price,
 			categoryId,
 			restaurantId,
+			userId,
 		});
 
 		return res.status(201).json(newProduct);

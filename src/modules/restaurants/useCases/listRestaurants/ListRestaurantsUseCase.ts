@@ -8,8 +8,8 @@ class ListRestaurantsUseCase {
 		private restaurantsRepository: IRestaurantsRepository
 	) {}
 
-	async execute() {
-		const restaurants = await this.restaurantsRepository.listAll();
+	async execute(userId: string) {
+		const restaurants = await this.restaurantsRepository.listAll(userId);
 
 		return restaurants;
 	}

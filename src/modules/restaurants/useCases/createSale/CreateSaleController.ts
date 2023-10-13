@@ -4,13 +4,14 @@ import { CreateSaleUseCase } from "./CreateSaleUseCase";
 
 class CreateSaleController {
 	async handle(req: Request, res: Response) {
+		const userId = req.userId;
 		const { restaurantId } = req.params;
-
 		const { title, description, discount } = req.body;
 
 		const createSaleUseCase = container.resolve(CreateSaleUseCase);
 
 		const newSale = await createSaleUseCase.execute({
+			userId,
 			restaurantId,
 			title,
 			description,

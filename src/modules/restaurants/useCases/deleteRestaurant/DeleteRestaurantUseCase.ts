@@ -9,13 +9,18 @@ class DeleteRestaurantUseCase {
 		private restaurantsRepository: IRestaurantsRepository
 	) {}
 
-	async execute(id: string) {
-		const restaurantExists = await this.restaurantsRepository.findById(id);
-		if (!restaurantExists) {
+	async execute(userId: string, restaurantId: string) {
+		const restaurant = await this.restaurantsRepository.findById(restaurantId);
+
+		if (!restaurant) {
 			throw new AppError("Restaurant does not exist.");
-		} else {
-			await this.restaurantsRepository.delete(id);
 		}
+
+		if (restaurant.userId !== userId) {
+			throw new AppError("Restaurant does not belong to this user.");
+		}
+
+		await this.restaurantsRepository.delete(restaurantId);
 	}
 }
 

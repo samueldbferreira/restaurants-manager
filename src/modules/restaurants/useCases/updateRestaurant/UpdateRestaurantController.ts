@@ -4,12 +4,14 @@ import { UpdateRestaurantUseCase } from "./UpdateRestaurantUseCase";
 
 class UpdateRestaurantController {
 	async handle(req: Request, res: Response) {
+		const userId = req.userId;
 		const { restaurantId } = req.params;
 		const { photo, name, address, schedule } = req.body;
 
 		const updateRestaurantUseCase = container.resolve(UpdateRestaurantUseCase);
 
 		const updatedRestaurant = await updateRestaurantUseCase.execute({
+			userId,
 			restaurantId,
 			photo,
 			name,

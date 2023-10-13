@@ -4,10 +4,11 @@ import { ICategoriesRepository } from "../../repositories/ICategoriesRepository"
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
 
 interface IRequest {
+	userId: string;
+	restaurantId: string;
 	categoryId: string;
 	name?: string;
 	description?: string;
-	restaurantId: string;
 }
 
 @injectable()
@@ -25,6 +26,10 @@ class UpdateCategoryUseCase {
 		);
 		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
+		}
+
+		if (restaurant.userId !== data.userId) {
+			throw new AppError("Restaurant does not belong to this user.");
 		}
 
 		const category = await this.categoriesRepository.findById(data.categoryId);

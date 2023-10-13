@@ -4,6 +4,7 @@ import { ISchedule } from "../../entities/ISchedule";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
 
 interface IRequest {
+	userId: string;
 	restaurantId: string;
 	photo?: string;
 	name?: string;
@@ -22,8 +23,13 @@ class UpdateRestaurantUseCase {
 		const restaurant = await this.restaurantsRepository.findById(
 			data.restaurantId
 		);
+
 		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
+		}
+
+		if (restaurant.userId !== data.userId) {
+			throw new AppError("Restaurant does not belong to this user.");
 		}
 
 		if (data.name && data.name !== restaurant.name) {

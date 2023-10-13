@@ -4,6 +4,7 @@ import { IProductsRepository } from "../../repositories/IProductsRepository";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
 
 interface IRequest {
+	userId: string;
 	restaurantId: string;
 	categoryId?: string;
 	name?: string;
@@ -22,11 +23,16 @@ class ListProductsUseCase {
 	) {}
 
 	async execute(data: IRequest) {
-		const restaurantExists = await this.restaurantsRepository.findById(
+		const restaurant = await this.restaurantsRepository.findById(
 			data.restaurantId
 		);
-		if (!restaurantExists) {
+
+		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
+		}
+
+		if (restaurant.userId !== data.userId) {
+			throw new AppError("Restaurant does not belong to this user.");
 		}
 
 		const products = await this.productsRepository.list(data);

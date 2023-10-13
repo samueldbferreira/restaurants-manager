@@ -10,6 +10,7 @@ interface IRequest {
 	price: number;
 	categoryId: string;
 	restaurantId: string;
+	userId: string;
 }
 
 @injectable()
@@ -24,22 +25,26 @@ class CreateProductUseCase {
 	) {}
 
 	async execute(data: IRequest) {
-		const restaurantExists = await this.restaurantsRepository.findById(
+		const restaurant = await this.restaurantsRepository.findById(
 			data.restaurantId
 		);
-		if (!restaurantExists) {
+
+		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
 		}
 
-		const categoryExists = await this.categoriesRepository.findById(
-			data.categoryId
-		);
-		if (!categoryExists) {
+		if (restaurant.userId !== data.userId) {
+			throw new AppError("Restaurant does not belong to the user.");
+		}
+
+		const category = await this.categoriesRepository.findById(data.categoryId);
+
+		if (!category) {
 			throw new AppError("Invalid category ID.");
 		}
 
-		if (restaurantExists.id !== categoryExists.restaurantId) {
-			throw new AppError("Category does not belong to this restaurant");
+		if (restaurant.id !== category.restaurantId) {
+			throw new AppError("Category does not belong to this restaurant.");
 		}
 
 		const productNameAlreadyExists = await this.productsRepository.findByName(
@@ -50,7 +55,13 @@ class CreateProductUseCase {
 			throw new AppError("This product name is already in use.");
 		}
 
-		const newProduct = await this.productsRepository.create(data);
+		const newProduct = await this.productsRepository.create({
+			name: data.name,
+			price: data.price,
+			photo: data.photo,
+			categoryId: data.categoryId,
+			restaurantId: data.restaurantId,
+		});
 
 		return newProduct;
 	}

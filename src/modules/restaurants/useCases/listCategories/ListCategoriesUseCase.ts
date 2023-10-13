@@ -12,12 +12,15 @@ class ListCategoriesUseCase {
 		private categoriesRepository: ICategoriesRepository
 	) {}
 
-	async execute(restaurantId: string) {
-		const restaurantExists = await this.restaurantsRepository.findById(
-			restaurantId
-		);
-		if (!restaurantExists) {
+	async execute(userId: string, restaurantId: string) {
+		const restaurant = await this.restaurantsRepository.findById(restaurantId);
+
+		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
+		}
+
+		if (restaurant.userId !== userId) {
+			throw new AppError("Restaurant does not belong to this user.");
 		}
 
 		const categories = await this.categoriesRepository.listByRestaurant(

@@ -4,12 +4,14 @@ import { ListProductsUseCase } from "./ListProductsUseCase";
 
 class ListProductsController {
 	async handle(req: Request, res: Response) {
+		const userId = req.userId;
 		const { restaurantId } = req.params;
 		const { categoryId, name, sort } = req.query;
 
 		const listProductsUseCase = container.resolve(ListProductsUseCase);
 
 		const products = await listProductsUseCase.execute({
+			userId,
 			restaurantId,
 			categoryId: categoryId as string,
 			name: name as string,

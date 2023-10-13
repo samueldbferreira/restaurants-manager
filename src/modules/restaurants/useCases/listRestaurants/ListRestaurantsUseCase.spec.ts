@@ -139,7 +139,7 @@ describe("List Restaurants", () => {
 			userId: user.id,
 		});
 
-		const restaurants = await listRestaurantsUseCase.execute();
+		const restaurants = await listRestaurantsUseCase.execute(user.id);
 
 		expect(restaurants.length).toEqual(3);
 	});

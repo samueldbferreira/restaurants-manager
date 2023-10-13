@@ -91,6 +91,7 @@ describe("Create Product", () => {
 			name: "Category Name",
 			description: "Category description",
 			restaurantId: restaurant.id,
+			userId: user.id,
 		});
 
 		const newProduct = await createProductUseCase.execute({
@@ -98,6 +99,7 @@ describe("Create Product", () => {
 			price: 24.75,
 			categoryId: category.id,
 			restaurantId: restaurant.id,
+			userId: user.id,
 		});
 
 		expect(newProduct).toHaveProperty("id");
@@ -151,6 +153,7 @@ describe("Create Product", () => {
 				name: "Category Name",
 				description: "Category description",
 				restaurantId: restaurant.id,
+				userId: user.id,
 			});
 
 			await createProductUseCase.execute({
@@ -158,6 +161,74 @@ describe("Create Product", () => {
 				price: 24.75,
 				categoryId: category.id,
 				restaurantId: "invalid id",
+				userId: user.id,
+			});
+		}).rejects.toBeInstanceOf(AppError);
+	});
+
+	it("should not be able to create a new product for a restaurant that does belong to the user", () => {
+		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
+			const restaurant = await createRestaurantUseCase.execute({
+				name: "restaurant name",
+				address: "restaurant address",
+				schedule: {
+					sun: {
+						start: "08:00",
+						end: "18:00",
+					},
+					mon: {
+						start: "08:00",
+						end: "18:00",
+					},
+					tue: {
+						start: "08:00",
+						end: "18:00",
+					},
+					wed: {
+						start: "08:00",
+						end: "18:00",
+					},
+					thu: {
+						start: "08:00",
+						end: "18:00",
+					},
+					fri: {
+						start: "08:00",
+						end: "18:00",
+					},
+					sat: {
+						start: "08:00",
+						end: "18:00",
+					},
+				},
+				userId: user.id,
+			});
+
+			const category = await createCategoryUseCase.execute({
+				name: "Category Name",
+				description: "Category description",
+				restaurantId: restaurant.id,
+				userId: user.id,
+			});
+
+			const user2 = await createUserUseCase.execute({
+				name: "User 2",
+				email: "user2@email.com",
+				password: "password",
+			});
+
+			createProductUseCase.execute({
+				name: "Product Name",
+				price: 24.75,
+				categoryId: category.id,
+				restaurantId: "invalid id",
+				userId: user2.id,
 			});
 		}).rejects.toBeInstanceOf(AppError);
 	});
@@ -210,6 +281,7 @@ describe("Create Product", () => {
 				name: "Category Name",
 				description: "Category description",
 				restaurantId: restaurant.id,
+				userId: user.id,
 			});
 
 			await createProductUseCase.execute({
@@ -217,11 +289,12 @@ describe("Create Product", () => {
 				price: 24.75,
 				categoryId: "invalid id",
 				restaurantId: restaurant.id,
+				userId: user.id,
 			});
 		}).rejects.toBeInstanceOf(AppError);
 	});
 
-	it("should not be able to create a new product for a category that does not belong to the restaurant received as a parameter.", () => {
+	it("should not be able to create a new product for a category that does not belong to the restaurant received as a parameter", () => {
 		expect(async () => {
 			const user = await createUserUseCase.execute({
 				name: "User Name",
@@ -269,6 +342,7 @@ describe("Create Product", () => {
 				name: "Category of Restaurant 1",
 				description: "Category description",
 				restaurantId: restaurant1.id,
+				userId: user.id,
 			});
 
 			const restaurant2 = await createRestaurantUseCase.execute({
@@ -307,10 +381,11 @@ describe("Create Product", () => {
 				userId: user.id,
 			});
 
-			const categoryRestaurant2 = await createCategoryUseCase.execute({
+			await createCategoryUseCase.execute({
 				name: "Category of Restaurant 2",
 				description: "Category description",
 				restaurantId: restaurant2.id,
+				userId: user.id,
 			});
 
 			await createProductUseCase.execute({
@@ -318,6 +393,76 @@ describe("Create Product", () => {
 				price: 24.75,
 				categoryId: categoryRestaurant1.id,
 				restaurantId: restaurant2.id,
+				userId: user.id,
+			});
+		}).rejects.toBeInstanceOf(AppError);
+	});
+
+	it("should not be able to create a new product for a restaurant that already have another product with the same name", () => {
+		expect(async () => {
+			const user = await createUserUseCase.execute({
+				name: "User Name",
+				email: "user@email.com",
+				password: "password",
+			});
+
+			const restaurant = await createRestaurantUseCase.execute({
+				name: "restaurant name",
+				address: "restaurant address",
+				schedule: {
+					sun: {
+						start: "08:00",
+						end: "18:00",
+					},
+					mon: {
+						start: "08:00",
+						end: "18:00",
+					},
+					tue: {
+						start: "08:00",
+						end: "18:00",
+					},
+					wed: {
+						start: "08:00",
+						end: "18:00",
+					},
+					thu: {
+						start: "08:00",
+						end: "18:00",
+					},
+					fri: {
+						start: "08:00",
+						end: "18:00",
+					},
+					sat: {
+						start: "08:00",
+						end: "18:00",
+					},
+				},
+				userId: user.id,
+			});
+
+			const category = await createCategoryUseCase.execute({
+				name: "Category Name",
+				description: "Category description",
+				restaurantId: restaurant.id,
+				userId: user.id,
+			});
+
+			await createProductUseCase.execute({
+				name: "Product Name",
+				price: 24.75,
+				categoryId: category.id,
+				restaurantId: restaurant.id,
+				userId: user.id,
+			});
+
+			await createProductUseCase.execute({
+				name: "Product Name",
+				price: 22.75,
+				categoryId: category.id,
+				restaurantId: restaurant.id,
+				userId: user.id,
 			});
 		}).rejects.toBeInstanceOf(AppError);
 	});
