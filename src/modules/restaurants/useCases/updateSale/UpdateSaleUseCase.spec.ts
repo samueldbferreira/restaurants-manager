@@ -12,7 +12,7 @@ import { GetSaleUseCase } from "../getSale/GetSaleUseCase";
 import { UpdateSaleUseCase } from "./UpdateSaleUseCase";
 import { AppError } from "../../../../shared/errors/AppError";
 
-describe("", () => {
+describe("Update Sale", () => {
 	let usersRepository: IUsersRepository;
 	let createUserUseCase: CreateUserUseCase;
 	let restaurantsRepository: IRestaurantsRepository;

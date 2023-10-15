@@ -40,6 +40,10 @@ class SalesRepositoryInMemory implements ISalesRepository {
 
 		return this.sales[idx];
 	}
+
+	async addProducts(saleId: string, products: string[]): Promise<number> {
+		throw new Error("Method not implemented.");
+	}
 }
 
 export { SalesRepositoryInMemory };

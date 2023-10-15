@@ -12,6 +12,8 @@ interface ISalesRepository {
 	list(restaurantId: string): Promise<ISale[]>;
 
 	update(data: IUpdateSaleDTO): Promise<ISale>;
+
+	addProducts(saleId: string, products: string[]): Promise<number>;
 }
 
 export { ISalesRepository };

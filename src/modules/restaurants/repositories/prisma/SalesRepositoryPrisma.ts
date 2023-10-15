@@ -56,6 +56,21 @@ class SalesRepositoryPrisma implements ISalesRepository {
 
 		return updatedSale;
 	}
+
+	async addProducts(saleId: string, products: string[]): Promise<number> {
+		const { count } = await prisma.product.updateMany({
+			where: {
+				id: {
+					in: products,
+				},
+			},
+			data: {
+				saleId,
+			},
+		});
+
+		return count;
+	}
 }
 
 export { SalesRepositoryPrisma };
