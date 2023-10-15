@@ -1,4 +1,5 @@
 import { ICreateSaleDTO } from "../dtos/ICreateSaleDTO";
+import { IUpdateSaleDTO } from "../dtos/IUpdateSaleDTO";
 import { ISale } from "../entities/ISale";
 
 interface ISalesRepository {
@@ -9,6 +10,8 @@ interface ISalesRepository {
 	findById(id: string): Promise<ISale | null>;
 
 	list(restaurantId: string): Promise<ISale[]>;
+
+	update(data: IUpdateSaleDTO): Promise<ISale>;
 }
 
 export { ISalesRepository };

@@ -1,5 +1,6 @@
 import { prisma } from "../../../../shared/infra/prisma";
 import { ICreateSaleDTO } from "../../dtos/ICreateSaleDTO";
+import { IUpdateSaleDTO } from "../../dtos/IUpdateSaleDTO";
 import { ISale } from "../../entities/ISale";
 import { ISalesRepository } from "../ISalesRepository";
 
@@ -39,6 +40,21 @@ class SalesRepositoryPrisma implements ISalesRepository {
 				restaurantId,
 			},
 		});
+	}
+
+	async update(data: IUpdateSaleDTO): Promise<ISale> {
+		const updatedSale = await prisma.sale.update({
+			where: {
+				id: data.saleId,
+			},
+			data: {
+				title: data.title,
+				description: data.description,
+				discount: data.discount,
+			},
+		});
+
+		return updatedSale;
 	}
 }
 
