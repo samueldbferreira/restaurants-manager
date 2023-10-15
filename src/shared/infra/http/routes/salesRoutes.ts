@@ -5,8 +5,10 @@ import { ListSalesController } from "../../../../modules/restaurants/useCases/li
 import { checkAuth } from "../middlewares/checkAuth";
 import { UpdateSaleController } from "../../../../modules/restaurants/useCases/updateSale/UpdateSaleController";
 import { AddSaleProductsController } from "../../../../modules/restaurants/useCases/addSaleProducts/AddSaleProductsController";
+import { RemoveSaleProductsController } from "../../../../modules/restaurants/useCases/removeSaleProducts/RemoveSaleProductsController";
 
 const addSaleProductsController = new AddSaleProductsController();
+const removeSaleProductsController = new RemoveSaleProductsController();
 const getSaleController = new GetSaleController();
 const updateSaleController = new UpdateSaleController();
 const listSalesController = new ListSalesController();
@@ -19,6 +21,11 @@ salesRoutes.use(checkAuth);
 salesRoutes.post(
 	"/restaurants/:restaurantId/sales/:saleId/products",
 	addSaleProductsController.handle
+);
+
+salesRoutes.delete(
+	"/restaurants/:restaurantId/sales/:saleId/products",
+	removeSaleProductsController.handle
 );
 
 salesRoutes.get(

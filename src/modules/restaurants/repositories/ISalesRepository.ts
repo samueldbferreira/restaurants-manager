@@ -14,6 +14,8 @@ interface ISalesRepository {
 	update(data: IUpdateSaleDTO): Promise<ISale>;
 
 	addProducts(saleId: string, products: string[]): Promise<number>;
+
+	removeProducts(saleId: string, products: string[]): Promise<number>;
 }
 
 export { ISalesRepository };

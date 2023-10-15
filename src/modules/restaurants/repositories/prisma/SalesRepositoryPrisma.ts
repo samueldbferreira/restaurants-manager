@@ -71,6 +71,28 @@ class SalesRepositoryPrisma implements ISalesRepository {
 
 		return count;
 	}
+
+	async removeProducts(saleId: string, products: string[]): Promise<number> {
+		const { count } = await prisma.product.updateMany({
+			where: {
+				AND: [
+					{
+						id: {
+							in: products,
+						},
+					},
+					{
+						saleId,
+					},
+				],
+			},
+			data: {
+				saleId: null,
+			},
+		});
+
+		return count;
+	}
 }
 
 export { SalesRepositoryPrisma };
