@@ -33,7 +33,15 @@ class GetSaleUseCase {
 			throw new AppError("Sale does not belong to this restaurant.");
 		}
 
-		return sale;
+		return Object.assign({
+			id: sale.id,
+			title: sale.title,
+			description: sale.description,
+			discount: sale.discount,
+			restaurantId: sale.restaurantId,
+			createdAt: sale.createdAt,
+			products: sale.Product,
+		});
 	}
 }
 
