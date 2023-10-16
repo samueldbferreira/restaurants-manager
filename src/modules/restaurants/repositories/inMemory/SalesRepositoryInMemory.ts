@@ -48,6 +48,12 @@ class SalesRepositoryInMemory implements ISalesRepository {
 	async removeProducts(saleId: string, products: string[]): Promise<number> {
 		throw new Error("Method not implemented.");
 	}
+
+	async delete(saleId: string): Promise<void> {
+		this.sales = this.sales.filter((s) => s.id !== saleId);
+
+		return;
+	}
 }
 
 export { SalesRepositoryInMemory };

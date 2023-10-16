@@ -93,6 +93,16 @@ class SalesRepositoryPrisma implements ISalesRepository {
 
 		return count;
 	}
+
+	async delete(saleId: string): Promise<void> {
+		await prisma.sale.delete({
+			where: {
+				id: saleId,
+			},
+		});
+
+		return;
+	}
 }
 
 export { SalesRepositoryPrisma };

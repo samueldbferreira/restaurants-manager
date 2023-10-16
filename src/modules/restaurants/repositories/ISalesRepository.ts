@@ -16,6 +16,8 @@ interface ISalesRepository {
 	addProducts(saleId: string, products: string[]): Promise<number>;
 
 	removeProducts(saleId: string, products: string[]): Promise<number>;
+
+	delete(saleId: string): Promise<void>;
 }
 
 export { ISalesRepository };
