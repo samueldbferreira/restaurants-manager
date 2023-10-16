@@ -10,6 +10,9 @@ class CategoriesRepositoryPrisma implements ICategoriesRepository {
 			where: {
 				id,
 			},
+			include: {
+				Product: true,
+			},
 		});
 	}
 

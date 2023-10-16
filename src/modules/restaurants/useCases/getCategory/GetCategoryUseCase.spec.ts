@@ -2,25 +2,23 @@ import "reflect-metadata";
 import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
 import { UsersRepositoryInMemory } from "../../../users/repositories/inMemory/UsersRepositoryInMemory";
 import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase";
+import { ICategoriesRepository } from "../../repositories/ICategoriesRepository";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
-import { ISalesRepository } from "../../repositories/ISalesRepository";
+import { CategoriesRepositoryInMemory } from "../../repositories/inMemory/CategoriesRepositoryInMemory";
 import { RestaurantsRepositoryInMemory } from "../../repositories/inMemory/RestaurantsRepositoryInMemory";
-import { SalesRepositoryInMemory } from "../../repositories/inMemory/SalesRepositoryInMemory";
+import { CreateCategoryUseCase } from "../createCategory/CreateCategoryUseCase";
 import { CreateRestaurantUseCase } from "../createRestaurant/CreateRestaurantUseCase";
-import { CreateSaleUseCase } from "../createSale/CreateSaleUseCase";
-import { GetSaleUseCase } from "../getSale/GetSaleUseCase";
-import { UpdateSaleUseCase } from "./UpdateSaleUseCase";
+import { GetCategoryUseCase } from "./GetCategoryUseCase";
 import { AppError } from "../../../../shared/errors/AppError";
 
-describe("Update Sale", () => {
+describe("Get Category", () => {
 	let usersRepository: IUsersRepository;
 	let createUserUseCase: CreateUserUseCase;
 	let restaurantsRepository: IRestaurantsRepository;
 	let createRestaurantUseCase: CreateRestaurantUseCase;
-	let salesRepository: ISalesRepository;
-	let createSaleUseCase: CreateSaleUseCase;
-	let updateSaleUseCase: UpdateSaleUseCase;
-	let getSaleUseCase: GetSaleUseCase;
+	let categoriesRepository: ICategoriesRepository;
+	let createCategoryUseCase: CreateCategoryUseCase;
+	let getCategoryUseCase: GetCategoryUseCase;
 
 	beforeEach(() => {
 		usersRepository = new UsersRepositoryInMemory();
@@ -29,19 +27,18 @@ describe("Update Sale", () => {
 		createRestaurantUseCase = new CreateRestaurantUseCase(
 			restaurantsRepository
 		);
-		salesRepository = new SalesRepositoryInMemory();
-		createSaleUseCase = new CreateSaleUseCase(
-			restaurantsRepository,
-			salesRepository
+		categoriesRepository = new CategoriesRepositoryInMemory();
+		createCategoryUseCase = new CreateCategoryUseCase(
+			categoriesRepository,
+			restaurantsRepository
 		);
-		updateSaleUseCase = new UpdateSaleUseCase(
+		getCategoryUseCase = new GetCategoryUseCase(
 			restaurantsRepository,
-			salesRepository
+			categoriesRepository
 		);
-		getSaleUseCase = new GetSaleUseCase(restaurantsRepository, salesRepository);
 	});
 
-	it("should be able to update a sale", async () => {
+	it("should be able to get a category", async () => {
 		const user = await createUserUseCase.execute({
 			name: "User Name",
 			email: "user@email.com",
@@ -49,7 +46,7 @@ describe("Update Sale", () => {
 		});
 
 		const restaurant = await createRestaurantUseCase.execute({
-			name: "restaurant",
+			name: "restaurant name",
 			address: "restaurant address",
 			schedule: {
 				sun: {
@@ -84,33 +81,23 @@ describe("Update Sale", () => {
 			userId: user.id,
 		});
 
-		const sale = await createSaleUseCase.execute({
-			userId: user.id,
+		const category = await createCategoryUseCase.execute({
+			name: "Category",
+			description: "Category description",
 			restaurantId: restaurant.id,
-			title: "Sale",
-			description: "Sale description",
-			discount: 0.15,
+			userId: user.id,
 		});
 
-		const updateData = {
-			userId: user.id,
-			restaurantId: restaurant.id,
-			saleId: sale.id,
-			title: "Updated Sale",
-		};
-
-		await updateSaleUseCase.execute(updateData);
-
-		const updatedSale = await getSaleUseCase.execute(
+		const returnedCategory = await getCategoryUseCase.execute(
 			user.id,
 			restaurant.id,
-			sale.id
+			category.id
 		);
 
-		expect(updatedSale.title).toEqual(updateData.title);
+		expect(returnedCategory.id).toEqual(category.id);
 	});
 
-	it("should not be able to update a sale of a invalid restaurant", () => {
+	it("should be able to get a category of a inexistent restaurant", () => {
 		expect(async () => {
 			const user = await createUserUseCase.execute({
 				name: "User Name",
@@ -119,7 +106,7 @@ describe("Update Sale", () => {
 			});
 
 			const restaurant = await createRestaurantUseCase.execute({
-				name: "restaurant",
+				name: "restaurant name",
 				address: "restaurant address",
 				schedule: {
 					sun: {
@@ -154,30 +141,22 @@ describe("Update Sale", () => {
 				userId: user.id,
 			});
 
-			const sale = await createSaleUseCase.execute({
-				userId: user.id,
+			const category = await createCategoryUseCase.execute({
+				name: "Category",
+				description: "Category description",
 				restaurantId: restaurant.id,
-				title: "Sale",
-				description: "Sale description",
-				discount: 0.15,
+				userId: user.id,
 			});
 
-			await updateSaleUseCase.execute({
-				userId: user.id,
-				restaurantId: "invalid restaurant id",
-				saleId: sale.id,
-				title: "Updated Sale",
-				description: "Updated Sale description",
-				discount: 0.25,
-			});
+			await getCategoryUseCase.execute(user.id, "invalid id", category.id);
 		}).rejects.toBeInstanceOf(AppError);
 	});
 
-	it("should not be able to update a sale of a restaurant that does not belong to the user", () => {
+	it("should be able to get a category of a restaurant that does not belong to the user", () => {
 		expect(async () => {
-			const user = await createUserUseCase.execute({
+			const user1 = await createUserUseCase.execute({
 				name: "User 1",
-				email: "user@email.com",
+				email: "user1@email.com",
 				password: "password",
 			});
 
@@ -188,7 +167,7 @@ describe("Update Sale", () => {
 			});
 
 			const restaurant = await createRestaurantUseCase.execute({
-				name: "restaurant",
+				name: "restaurant name",
 				address: "restaurant address",
 				schedule: {
 					sun: {
@@ -220,38 +199,30 @@ describe("Update Sale", () => {
 						end: "18:00",
 					},
 				},
-				userId: user.id,
+				userId: user1.id,
 			});
 
-			const sale = await createSaleUseCase.execute({
-				userId: user.id,
+			const category = await createCategoryUseCase.execute({
+				name: "Category",
+				description: "Category description",
 				restaurantId: restaurant.id,
-				title: "Sale",
-				description: "Sale description",
-				discount: 0.15,
+				userId: user1.id,
 			});
 
-			await updateSaleUseCase.execute({
-				userId: user2.id,
-				restaurantId: restaurant.id,
-				saleId: sale.id,
-				title: "Updated Sale",
-				description: "Updated Sale description",
-				discount: 0.25,
-			});
+			await getCategoryUseCase.execute(user2.id, restaurant.id, category.id);
 		}).rejects.toBeInstanceOf(AppError);
 	});
 
-	it("should not be able to update a inexistent sale", () => {
+	it("should be able to get a inexistent category", () => {
 		expect(async () => {
 			const user = await createUserUseCase.execute({
-				name: "User",
+				name: "User Name",
 				email: "user@email.com",
 				password: "password",
 			});
 
 			const restaurant = await createRestaurantUseCase.execute({
-				name: "restaurant",
+				name: "restaurant name",
 				address: "restaurant address",
 				schedule: {
 					sun: {
@@ -286,21 +257,14 @@ describe("Update Sale", () => {
 				userId: user.id,
 			});
 
-			await updateSaleUseCase.execute({
-				userId: user.id,
-				restaurantId: restaurant.id,
-				saleId: "invalid sale id",
-				title: "Updated Sale",
-				description: "Updated Sale description",
-				discount: 0.25,
-			});
+			await getCategoryUseCase.execute(user.id, restaurant.id, "invalid id");
 		}).rejects.toBeInstanceOf(AppError);
 	});
 
-	it("should not be able to update a sale that does not belong to the restaurant", () => {
+	it("should be able to get a category that does not belong to the restaurant", () => {
 		expect(async () => {
 			const user = await createUserUseCase.execute({
-				name: "User",
+				name: "User Name",
 				email: "user@email.com",
 				password: "password",
 			});
@@ -341,14 +305,6 @@ describe("Update Sale", () => {
 				userId: user.id,
 			});
 
-			const sale = await createSaleUseCase.execute({
-				userId: user.id,
-				restaurantId: restaurant1.id,
-				title: "Sale",
-				description: "Sale description",
-				discount: 0.15,
-			});
-
 			const restaurant2 = await createRestaurantUseCase.execute({
 				name: "Restaurant 2",
 				address: "restaurant address",
@@ -385,83 +341,14 @@ describe("Update Sale", () => {
 				userId: user.id,
 			});
 
-			await updateSaleUseCase.execute({
-				userId: user.id,
-				restaurantId: restaurant2.id,
-				saleId: sale.id,
-				title: "Updated Sale",
-				description: "Updated Sale description",
-				discount: 0.25,
-			});
-		}).rejects.toBeInstanceOf(AppError);
-	});
-
-	it("should not be able to update a the sales name to a already existing one", () => {
-		expect(async () => {
-			const user = await createUserUseCase.execute({
-				name: "User",
-				email: "user@email.com",
-				password: "password",
-			});
-
-			const restaurant = await createRestaurantUseCase.execute({
-				name: "restaurant",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
-				},
+			const category = await createCategoryUseCase.execute({
+				name: "Category",
+				description: "Category description",
+				restaurantId: restaurant1.id,
 				userId: user.id,
 			});
 
-			const sale1 = await createSaleUseCase.execute({
-				userId: user.id,
-				restaurantId: restaurant.id,
-				title: "Sale 1 Title",
-				description: "Sale description",
-				discount: 0.15,
-			});
-
-			const sale2 = await createSaleUseCase.execute({
-				userId: user.id,
-				restaurantId: restaurant.id,
-				title: "Sale 2 Title",
-				description: "Sale description",
-				discount: 0.15,
-			});
-
-			await updateSaleUseCase.execute({
-				userId: user.id,
-				restaurantId: restaurant.id,
-				saleId: sale2.id,
-				title: "Sale 1 Title",
-			});
+			await getCategoryUseCase.execute(user.id, restaurant2.id, category.id);
 		}).rejects.toBeInstanceOf(AppError);
 	});
 });
