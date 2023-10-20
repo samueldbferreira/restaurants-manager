@@ -68,15 +68,51 @@ describe("Create Restaurant", () => {
 		expect(newRestaurant).toHaveProperty("id");
 	});
 
-	it("should not be able to create a restaurant with an already existing name", () => {
-		expect(async () => {
-			const user = await createUserUseCase.execute({
-				name: "User Name",
-				email: "user@email.com",
-				password: "password",
-			});
+	it("should not be able to create a restaurant with an already existing name", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
 
-			await createRestaurantUseCase.execute({
+		await createRestaurantUseCase.execute({
+			name: "restaurant name",
+			address: "restaurant address",
+			schedule: {
+				sun: {
+					start: "08:00",
+					end: "18:00",
+				},
+				mon: {
+					start: "08:00",
+					end: "18:00",
+				},
+				tue: {
+					start: "08:00",
+					end: "18:00",
+				},
+				wed: {
+					start: "08:00",
+					end: "18:00",
+				},
+				thu: {
+					start: "08:00",
+					end: "18:00",
+				},
+				fri: {
+					start: "08:00",
+					end: "18:00",
+				},
+				sat: {
+					start: "08:00",
+					end: "18:00",
+				},
+			},
+			userId: user.id,
+		});
+
+		await expect(
+			createRestaurantUseCase.execute({
 				name: "restaurant name",
 				address: "restaurant address",
 				schedule: {
@@ -110,43 +146,7 @@ describe("Create Restaurant", () => {
 					},
 				},
 				userId: user.id,
-			});
-
-			await createRestaurantUseCase.execute({
-				name: "restaurant name",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
-				},
-				userId: user.id,
-			});
-		}).rejects.toBeInstanceOf(AppError);
+			})
+		).rejects.toEqual(new AppError("This restaurant name is already in use."));
 	});
 });

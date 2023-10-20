@@ -29,8 +29,6 @@ class GetCategoryUseCase {
 			throw new AppError("Category does not belong to the restaurant.");
 		}
 
-		console.log(category);
-
 		return {
 			id: category.id,
 			name: category.name,

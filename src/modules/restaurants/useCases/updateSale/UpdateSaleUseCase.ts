@@ -29,7 +29,7 @@ class UpdateSaleUseCase {
 			throw new AppError("Invalid restaurant ID.");
 		}
 		if (restaurant.userId !== data.userId) {
-			throw new AppError("Restaurant does not belong to this user");
+			throw new AppError("Restaurant does not belong to this user.");
 		}
 
 		const sale = await this.salesRepository.findById(data.saleId);

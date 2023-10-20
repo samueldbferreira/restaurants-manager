@@ -27,7 +27,6 @@ class UpdateCategoryUseCase {
 		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
 		}
-
 		if (restaurant.userId !== data.userId) {
 			throw new AppError("Restaurant does not belong to this user.");
 		}
@@ -36,7 +35,6 @@ class UpdateCategoryUseCase {
 		if (!category) {
 			throw new AppError("Invalid category ID.");
 		}
-
 		if (restaurant.id !== category.restaurantId) {
 			throw new AppError("Category does not belong to this restaurant.");
 		}

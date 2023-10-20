@@ -32,7 +32,6 @@ class UpdateProductUseCase {
 		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
 		}
-
 		if (restaurant.userId !== data.userId) {
 			throw new AppError("Restaurant does not belong to the user.");
 		}
@@ -41,7 +40,6 @@ class UpdateProductUseCase {
 		if (!product) {
 			throw new AppError("Invalid product ID.");
 		}
-
 		if (product.restaurantId !== restaurant.id) {
 			throw new AppError("Product does not belong to this restaurant.");
 		}
@@ -56,16 +54,14 @@ class UpdateProductUseCase {
 			}
 		}
 
-		if (data.categoryId) {
-			const categoryExists = await this.categoriesRepository.findById(
+		if (data.categoryId && data.categoryId !== product.categoryId) {
+			const category = await this.categoriesRepository.findById(
 				data.categoryId
 			);
-
-			if (!categoryExists) {
+			if (!category) {
 				throw new AppError("Invalid category ID.");
 			}
-
-			if (categoryExists.restaurantId !== data.restaurantId) {
+			if (category.restaurantId !== data.restaurantId) {
 				throw new AppError("Category does not belong to this restaurant.");
 			}
 		}

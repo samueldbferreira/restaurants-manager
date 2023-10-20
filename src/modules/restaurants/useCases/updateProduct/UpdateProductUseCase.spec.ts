@@ -133,561 +133,451 @@ describe("Update Product", () => {
 		expect(updatedProduct).toEqual(Object.assign(product, updateData));
 	});
 
-	it("should not be able to update a product sending a invalid restaurant ID.", () => {
-		expect(async () => {
-			const user = await createUserUseCase.execute({
-				name: "User Name",
-				email: "user@email.com",
-				password: "password",
-			});
+	it("should not be able to update a product sending a invalid restaurant ID.", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
 
-			const restaurant = await createRestaurantUseCase.execute({
-				name: "restaurant",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
+		const restaurant = await createRestaurantUseCase.execute({
+			name: "restaurant",
+			address: "restaurant address",
+			schedule: {
+				sun: {
+					start: "08:00",
+					end: "18:00",
 				},
-				userId: user.id,
-			});
+				mon: {
+					start: "08:00",
+					end: "18:00",
+				},
+				tue: {
+					start: "08:00",
+					end: "18:00",
+				},
+				wed: {
+					start: "08:00",
+					end: "18:00",
+				},
+				thu: {
+					start: "08:00",
+					end: "18:00",
+				},
+				fri: {
+					start: "08:00",
+					end: "18:00",
+				},
+				sat: {
+					start: "08:00",
+					end: "18:00",
+				},
+			},
+			userId: user.id,
+		});
 
-			const category = await createCategoryUseCase.execute({
-				name: "Category",
-				description: "Category description",
-				restaurantId: restaurant.id,
-				userId: user.id,
-			});
+		const category = await createCategoryUseCase.execute({
+			name: "Category",
+			description: "Category description",
+			restaurantId: restaurant.id,
+			userId: user.id,
+		});
 
-			const product = await createProductUseCase.execute({
-				name: "Product",
-				price: 24.75,
-				categoryId: category.id,
-				restaurantId: restaurant.id,
-				userId: user.id,
-			});
+		const product = await createProductUseCase.execute({
+			name: "Product",
+			price: 24.75,
+			categoryId: category.id,
+			restaurantId: restaurant.id,
+			userId: user.id,
+		});
 
-			await updateProductUseCase.execute({
+		await expect(
+			updateProductUseCase.execute({
 				userId: user.id,
 				restaurantId: "invalid id",
 				productId: product.id,
 				name: "New Name",
-			});
-		}).rejects.toBeInstanceOf(AppError);
+			})
+		).rejects.toEqual(new AppError("Invalid restaurant ID."));
 	});
 
 	it("should not be able to update a product of a restaurant that does not belong to the user.", async () => {
-		expect(async () => {
-			const user = await createUserUseCase.execute({
-				name: "User Name",
-				email: "user@email.com",
-				password: "password",
-			});
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
 
-			const user2 = await createUserUseCase.execute({
-				name: "User Name",
-				email: "user2@email.com",
-				password: "password",
-			});
+		const user2 = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user2@email.com",
+			password: "password",
+		});
 
-			const restaurant = await createRestaurantUseCase.execute({
-				name: "restaurant",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
+		const restaurant = await createRestaurantUseCase.execute({
+			name: "restaurant",
+			address: "restaurant address",
+			schedule: {
+				sun: {
+					start: "08:00",
+					end: "18:00",
 				},
-				userId: user.id,
-			});
+				mon: {
+					start: "08:00",
+					end: "18:00",
+				},
+				tue: {
+					start: "08:00",
+					end: "18:00",
+				},
+				wed: {
+					start: "08:00",
+					end: "18:00",
+				},
+				thu: {
+					start: "08:00",
+					end: "18:00",
+				},
+				fri: {
+					start: "08:00",
+					end: "18:00",
+				},
+				sat: {
+					start: "08:00",
+					end: "18:00",
+				},
+			},
+			userId: user.id,
+		});
 
-			const category = await createCategoryUseCase.execute({
-				name: "Category",
-				description: "Category description",
-				restaurantId: restaurant.id,
-				userId: user.id,
-			});
+		const category = await createCategoryUseCase.execute({
+			name: "Category",
+			description: "Category description",
+			restaurantId: restaurant.id,
+			userId: user.id,
+		});
 
-			const product = await createProductUseCase.execute({
-				name: "Product",
-				price: 24.75,
-				categoryId: category.id,
-				restaurantId: restaurant.id,
-				userId: user.id,
-			});
+		const product = await createProductUseCase.execute({
+			name: "Product",
+			price: 24.75,
+			categoryId: category.id,
+			restaurantId: restaurant.id,
+			userId: user.id,
+		});
 
-			const updateData = {
-				userId: user2.id,
-				restaurantId: product.restaurantId,
-				productId: product.id,
-				name: "New Name",
-			};
+		const updateData = {
+			userId: user2.id,
+			restaurantId: product.restaurantId,
+			productId: product.id,
+			name: "New Name",
+		};
 
-			await updateProductUseCase.execute(updateData);
-		}).rejects.toBeInstanceOf(AppError);
+		await expect(updateProductUseCase.execute(updateData)).rejects.toEqual(
+			new AppError("Restaurant does not belong to the user.")
+		);
 	});
 
-	it("should not be able to update a non-existing product", () => {
-		expect(async () => {
-			const user = await createUserUseCase.execute({
-				name: "User Name",
-				email: "user@email.com",
-				password: "password",
-			});
+	it("should not be able to update a non-existing product", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
 
-			const restaurant = await createRestaurantUseCase.execute({
-				name: "restaurant",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
+		const restaurant = await createRestaurantUseCase.execute({
+			name: "restaurant",
+			address: "restaurant address",
+			schedule: {
+				sun: {
+					start: "08:00",
+					end: "18:00",
 				},
-				userId: user.id,
-			});
+				mon: {
+					start: "08:00",
+					end: "18:00",
+				},
+				tue: {
+					start: "08:00",
+					end: "18:00",
+				},
+				wed: {
+					start: "08:00",
+					end: "18:00",
+				},
+				thu: {
+					start: "08:00",
+					end: "18:00",
+				},
+				fri: {
+					start: "08:00",
+					end: "18:00",
+				},
+				sat: {
+					start: "08:00",
+					end: "18:00",
+				},
+			},
+			userId: user.id,
+		});
 
-			await updateProductUseCase.execute({
+		await expect(
+			updateProductUseCase.execute({
 				userId: user.id,
 				restaurantId: restaurant.id,
 				productId: "invalid id",
 				name: "New Name",
-			});
-		}).rejects.toBeInstanceOf(AppError);
+			})
+		).rejects.toEqual(new AppError("Invalid product ID."));
 	});
 
-	it("should not be able to update a product that does not belong to the restaurant received as a parameter.", () => {
-		expect(async () => {
-			const user = await createUserUseCase.execute({
-				name: "User Name",
-				email: "user@email.com",
-				password: "password",
-			});
+	it("should not be able to update a product that does not belong to the restaurant received as a parameter.", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
 
-			const restaurant1 = await createRestaurantUseCase.execute({
-				name: "restaurant 1",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
+		const restaurant1 = await createRestaurantUseCase.execute({
+			name: "restaurant 1",
+			address: "restaurant address",
+			schedule: {
+				sun: {
+					start: "08:00",
+					end: "18:00",
 				},
-				userId: user.id,
-			});
-
-			const restaurant2 = await createRestaurantUseCase.execute({
-				name: "restaurant 2",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
+				mon: {
+					start: "08:00",
+					end: "18:00",
 				},
-				userId: user.id,
-			});
+				tue: {
+					start: "08:00",
+					end: "18:00",
+				},
+				wed: {
+					start: "08:00",
+					end: "18:00",
+				},
+				thu: {
+					start: "08:00",
+					end: "18:00",
+				},
+				fri: {
+					start: "08:00",
+					end: "18:00",
+				},
+				sat: {
+					start: "08:00",
+					end: "18:00",
+				},
+			},
+			userId: user.id,
+		});
 
-			const category = await createCategoryUseCase.execute({
-				name: "Category",
-				description: "Category description",
-				restaurantId: restaurant1.id,
-				userId: user.id,
-			});
+		const restaurant2 = await createRestaurantUseCase.execute({
+			name: "restaurant 2",
+			address: "restaurant address",
+			schedule: {
+				sun: {
+					start: "08:00",
+					end: "18:00",
+				},
+				mon: {
+					start: "08:00",
+					end: "18:00",
+				},
+				tue: {
+					start: "08:00",
+					end: "18:00",
+				},
+				wed: {
+					start: "08:00",
+					end: "18:00",
+				},
+				thu: {
+					start: "08:00",
+					end: "18:00",
+				},
+				fri: {
+					start: "08:00",
+					end: "18:00",
+				},
+				sat: {
+					start: "08:00",
+					end: "18:00",
+				},
+			},
+			userId: user.id,
+		});
 
-			const product = await createProductUseCase.execute({
-				name: "Product",
-				price: 24.75,
-				categoryId: category.id,
-				restaurantId: restaurant1.id,
-				userId: user.id,
-			});
+		const category = await createCategoryUseCase.execute({
+			name: "Category",
+			description: "Category description",
+			restaurantId: restaurant1.id,
+			userId: user.id,
+		});
 
-			await updateProductUseCase.execute({
+		const product = await createProductUseCase.execute({
+			name: "Product",
+			price: 24.75,
+			categoryId: category.id,
+			restaurantId: restaurant1.id,
+			userId: user.id,
+		});
+
+		await expect(
+			updateProductUseCase.execute({
 				userId: user.id,
 				restaurantId: restaurant2.id,
 				productId: product.id,
 				name: "New Name",
-			});
-		}).rejects.toBeInstanceOf(AppError);
+			})
+		).rejects.toEqual(
+			new AppError("Product does not belong to this restaurant.")
+		);
 	});
 
-	it("should not be able to update a product name to a already in use one", () => {
-		expect(async () => {
-			const user = await createUserUseCase.execute({
-				name: "User Name",
-				email: "user@email.com",
-				password: "password",
-			});
+	it("should not be able to update a product name to a already in use one", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
 
-			const restaurant = await createRestaurantUseCase.execute({
-				name: "restaurant",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
+		const restaurant = await createRestaurantUseCase.execute({
+			name: "restaurant",
+			address: "restaurant address",
+			schedule: {
+				sun: {
+					start: "08:00",
+					end: "18:00",
 				},
-				userId: user.id,
-			});
+				mon: {
+					start: "08:00",
+					end: "18:00",
+				},
+				tue: {
+					start: "08:00",
+					end: "18:00",
+				},
+				wed: {
+					start: "08:00",
+					end: "18:00",
+				},
+				thu: {
+					start: "08:00",
+					end: "18:00",
+				},
+				fri: {
+					start: "08:00",
+					end: "18:00",
+				},
+				sat: {
+					start: "08:00",
+					end: "18:00",
+				},
+			},
+			userId: user.id,
+		});
 
-			const category = await createCategoryUseCase.execute({
-				name: "Category",
-				description: "Category description",
-				restaurantId: restaurant.id,
-				userId: user.id,
-			});
+		const category = await createCategoryUseCase.execute({
+			name: "Category",
+			description: "Category description",
+			restaurantId: restaurant.id,
+			userId: user.id,
+		});
 
-			await createProductUseCase.execute({
-				name: "Product 1",
-				price: 24.75,
-				categoryId: category.id,
-				restaurantId: restaurant.id,
-				userId: user.id,
-			});
+		await createProductUseCase.execute({
+			name: "Product 1",
+			price: 24.75,
+			categoryId: category.id,
+			restaurantId: restaurant.id,
+			userId: user.id,
+		});
 
-			const product2 = await createProductUseCase.execute({
-				name: "Product 2",
-				price: 30.75,
-				categoryId: category.id,
-				restaurantId: restaurant.id,
-				userId: user.id,
-			});
+		const product2 = await createProductUseCase.execute({
+			name: "Product 2",
+			price: 30.75,
+			categoryId: category.id,
+			restaurantId: restaurant.id,
+			userId: user.id,
+		});
 
-			await updateProductUseCase.execute({
+		await expect(
+			updateProductUseCase.execute({
 				userId: user.id,
 				restaurantId: restaurant.id,
 				productId: product2.id,
 				name: "Product 1",
-			});
-		}).rejects.toBeInstanceOf(AppError);
+			})
+		).rejects.toEqual(new AppError("This product name is already in use."));
 	});
 
-	it("should not be able to update a product to a non-existing category", () => {
-		expect(async () => {
-			const user = await createUserUseCase.execute({
-				name: "User Name",
-				email: "user@email.com",
-				password: "password",
-			});
+	it("should not be able to update a product to a non-existing category", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
 
-			const restaurant = await createRestaurantUseCase.execute({
-				name: "restaurant",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
+		const restaurant = await createRestaurantUseCase.execute({
+			name: "restaurant",
+			address: "restaurant address",
+			schedule: {
+				sun: {
+					start: "08:00",
+					end: "18:00",
 				},
-				userId: user.id,
-			});
+				mon: {
+					start: "08:00",
+					end: "18:00",
+				},
+				tue: {
+					start: "08:00",
+					end: "18:00",
+				},
+				wed: {
+					start: "08:00",
+					end: "18:00",
+				},
+				thu: {
+					start: "08:00",
+					end: "18:00",
+				},
+				fri: {
+					start: "08:00",
+					end: "18:00",
+				},
+				sat: {
+					start: "08:00",
+					end: "18:00",
+				},
+			},
+			userId: user.id,
+		});
 
-			const category = await createCategoryUseCase.execute({
-				name: "Category",
-				description: "Category description",
-				restaurantId: restaurant.id,
-				userId: user.id,
-			});
+		const category = await createCategoryUseCase.execute({
+			name: "Category",
+			description: "Category description",
+			restaurantId: restaurant.id,
+			userId: user.id,
+		});
 
-			const product = await createProductUseCase.execute({
-				name: "Product",
-				price: 24.75,
-				categoryId: category.id,
-				restaurantId: restaurant.id,
-				userId: user.id,
-			});
+		const product = await createProductUseCase.execute({
+			name: "Product",
+			price: 24.75,
+			categoryId: category.id,
+			restaurantId: restaurant.id,
+			userId: user.id,
+		});
 
-			await updateProductUseCase.execute({
+		await expect(
+			updateProductUseCase.execute({
 				userId: user.id,
 				restaurantId: restaurant.id,
 				productId: product.id,
 				name: "New Name",
 				categoryId: "invalid id",
-			});
-		}).rejects.toBeInstanceOf(AppError);
-	});
-
-	it("should not be able to update a product to a category that does not belong to the restaurant received as a parameter.", () => {
-		expect(async () => {
-			const user = await createUserUseCase.execute({
-				name: "User Name",
-				email: "user@email.com",
-				password: "password",
-			});
-
-			const restaurant1 = await createRestaurantUseCase.execute({
-				name: "restaurant 1",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
-				},
-				userId: user.id,
-			});
-
-			const category1 = await createCategoryUseCase.execute({
-				name: "Category Restaurant 1",
-				description: "Category description",
-				restaurantId: restaurant1.id,
-				userId: user.id,
-			});
-
-			const restaurant2 = await createRestaurantUseCase.execute({
-				name: "restaurant 2",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
-				},
-				userId: user.id,
-			});
-
-			const category2 = await createCategoryUseCase.execute({
-				name: "Category Restaurant 2",
-				description: "Category description",
-				restaurantId: restaurant2.id,
-				userId: user.id,
-			});
-
-			const product = await createProductUseCase.execute({
-				name: "Product",
-				price: 24.75,
-				categoryId: category1.id,
-				restaurantId: restaurant1.id,
-				userId: user.id,
-			});
-
-			await updateProductUseCase.execute({
-				userId: user.id,
-				restaurantId: restaurant1.id,
-				productId: product.id,
-				name: "New Name",
-				categoryId: category2.id,
-			});
-		}).rejects.toBeInstanceOf(AppError);
+			})
+		).rejects.toEqual(new AppError("Invalid category ID."));
 	});
 });

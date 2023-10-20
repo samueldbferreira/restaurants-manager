@@ -14,11 +14,9 @@ class DeleteCategoryUseCase {
 
 	async execute(userId: string, restaurantId: string, categoryId: string) {
 		const restaurant = await this.restaurantsRepository.findById(restaurantId);
-
 		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
 		}
-
 		if (restaurant.userId !== userId) {
 			throw new AppError("Restaurant does not belong to this user.");
 		}

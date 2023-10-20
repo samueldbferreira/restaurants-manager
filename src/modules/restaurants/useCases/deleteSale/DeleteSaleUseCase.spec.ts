@@ -118,265 +118,261 @@ describe("Delete Sale", () => {
 		expect(sales).toEqual([sale1, sale3]);
 	});
 
-	it("should not be able to delete a sale of a inexistent restaurant.", () => {
-		expect(async () => {
-			const user = await createUserUseCase.execute({
-				name: "User Name",
-				email: "user@email.com",
-				password: "password",
-			});
+	it("should not be able to delete a sale of a inexistent restaurant.", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
 
-			const restaurant = await createRestaurantUseCase.execute({
-				name: "restaurant",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
+		const restaurant = await createRestaurantUseCase.execute({
+			name: "restaurant",
+			address: "restaurant address",
+			schedule: {
+				sun: {
+					start: "08:00",
+					end: "18:00",
 				},
-				userId: user.id,
-			});
+				mon: {
+					start: "08:00",
+					end: "18:00",
+				},
+				tue: {
+					start: "08:00",
+					end: "18:00",
+				},
+				wed: {
+					start: "08:00",
+					end: "18:00",
+				},
+				thu: {
+					start: "08:00",
+					end: "18:00",
+				},
+				fri: {
+					start: "08:00",
+					end: "18:00",
+				},
+				sat: {
+					start: "08:00",
+					end: "18:00",
+				},
+			},
+			userId: user.id,
+		});
 
-			const sale = await createSaleUseCase.execute({
-				userId: user.id,
-				restaurantId: restaurant.id,
-				title: "Sale",
-				description: "Sale description",
-				discount: 0.25,
-			});
+		const sale = await createSaleUseCase.execute({
+			userId: user.id,
+			restaurantId: restaurant.id,
+			title: "Sale",
+			description: "Sale description",
+			discount: 0.25,
+		});
 
-			await deleteSaleUseCase.execute(user.id, "invalid id", sale.id);
-		}).rejects.toBeInstanceOf(AppError);
+		await expect(
+			deleteSaleUseCase.execute(user.id, "invalid id", sale.id)
+		).rejects.toEqual(new AppError("Invalid restaurant ID."));
 	});
 
-	it("should not be able to delete a sale of a restaurant that does not belong to the user", () => {
-		expect(async () => {
-			const user = await createUserUseCase.execute({
-				name: "User 1",
-				email: "user@email.com",
-				password: "password",
-			});
+	it("should not be able to delete a sale of a restaurant that does not belong to the user", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User 1",
+			email: "user@email.com",
+			password: "password",
+		});
 
-			const user2 = await createUserUseCase.execute({
-				name: "User 2",
-				email: "user2@email.com",
-				password: "password",
-			});
+		const user2 = await createUserUseCase.execute({
+			name: "User 2",
+			email: "user2@email.com",
+			password: "password",
+		});
 
-			const restaurant = await createRestaurantUseCase.execute({
-				name: "restaurant",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
+		const restaurant = await createRestaurantUseCase.execute({
+			name: "restaurant",
+			address: "restaurant address",
+			schedule: {
+				sun: {
+					start: "08:00",
+					end: "18:00",
 				},
-				userId: user.id,
-			});
+				mon: {
+					start: "08:00",
+					end: "18:00",
+				},
+				tue: {
+					start: "08:00",
+					end: "18:00",
+				},
+				wed: {
+					start: "08:00",
+					end: "18:00",
+				},
+				thu: {
+					start: "08:00",
+					end: "18:00",
+				},
+				fri: {
+					start: "08:00",
+					end: "18:00",
+				},
+				sat: {
+					start: "08:00",
+					end: "18:00",
+				},
+			},
+			userId: user.id,
+		});
 
-			const sale = await createSaleUseCase.execute({
-				userId: user.id,
-				restaurantId: restaurant.id,
-				title: "Sale",
-				description: "Sale description",
-				discount: 0.25,
-			});
+		const sale = await createSaleUseCase.execute({
+			userId: user.id,
+			restaurantId: restaurant.id,
+			title: "Sale",
+			description: "Sale description",
+			discount: 0.25,
+		});
 
-			await deleteSaleUseCase.execute(user2.id, restaurant.id, sale.id);
-		}).rejects.toBeInstanceOf(AppError);
+		await expect(
+			deleteSaleUseCase.execute(user2.id, restaurant.id, sale.id)
+		).rejects.toEqual(new AppError("Restaurant does not belong to this user."));
 	});
 
-	it("should not be able to delete a inexistent sale", () => {
-		expect(async () => {
-			const user = await createUserUseCase.execute({
-				name: "User Name",
-				email: "user@email.com",
-				password: "password",
-			});
+	it("should not be able to delete a inexistent sale", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
 
-			const restaurant = await createRestaurantUseCase.execute({
-				name: "restaurant",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
+		const restaurant = await createRestaurantUseCase.execute({
+			name: "restaurant",
+			address: "restaurant address",
+			schedule: {
+				sun: {
+					start: "08:00",
+					end: "18:00",
 				},
-				userId: user.id,
-			});
+				mon: {
+					start: "08:00",
+					end: "18:00",
+				},
+				tue: {
+					start: "08:00",
+					end: "18:00",
+				},
+				wed: {
+					start: "08:00",
+					end: "18:00",
+				},
+				thu: {
+					start: "08:00",
+					end: "18:00",
+				},
+				fri: {
+					start: "08:00",
+					end: "18:00",
+				},
+				sat: {
+					start: "08:00",
+					end: "18:00",
+				},
+			},
+			userId: user.id,
+		});
 
-			await deleteSaleUseCase.execute(
-				user.id,
-				restaurant.id,
-				"invalid sale id"
-			);
-		}).rejects.toBeInstanceOf(AppError);
+		await expect(
+			deleteSaleUseCase.execute(user.id, restaurant.id, "invalid sale id")
+		).rejects.toEqual(new AppError("Invalid sale ID."));
 	});
 
-	it("should not be able to delete a sale that does not belong to the restaurant", () => {
-		expect(async () => {
-			const user = await createUserUseCase.execute({
-				name: "User Name",
-				email: "user@email.com",
-				password: "password",
-			});
+	it("should not be able to delete a sale that does not belong to the restaurant", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
 
-			const restaurant1 = await createRestaurantUseCase.execute({
-				name: "Restaurant 1",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
+		const restaurant1 = await createRestaurantUseCase.execute({
+			name: "Restaurant 1",
+			address: "restaurant address",
+			schedule: {
+				sun: {
+					start: "08:00",
+					end: "18:00",
 				},
-				userId: user.id,
-			});
-
-			const restaurant2 = await createRestaurantUseCase.execute({
-				name: "Restaurant 2",
-				address: "restaurant address",
-				schedule: {
-					sun: {
-						start: "08:00",
-						end: "18:00",
-					},
-					mon: {
-						start: "08:00",
-						end: "18:00",
-					},
-					tue: {
-						start: "08:00",
-						end: "18:00",
-					},
-					wed: {
-						start: "08:00",
-						end: "18:00",
-					},
-					thu: {
-						start: "08:00",
-						end: "18:00",
-					},
-					fri: {
-						start: "08:00",
-						end: "18:00",
-					},
-					sat: {
-						start: "08:00",
-						end: "18:00",
-					},
+				mon: {
+					start: "08:00",
+					end: "18:00",
 				},
-				userId: user.id,
-			});
+				tue: {
+					start: "08:00",
+					end: "18:00",
+				},
+				wed: {
+					start: "08:00",
+					end: "18:00",
+				},
+				thu: {
+					start: "08:00",
+					end: "18:00",
+				},
+				fri: {
+					start: "08:00",
+					end: "18:00",
+				},
+				sat: {
+					start: "08:00",
+					end: "18:00",
+				},
+			},
+			userId: user.id,
+		});
 
-			const sale = await createSaleUseCase.execute({
-				userId: user.id,
-				restaurantId: restaurant1.id,
-				title: "Sale",
-				description: "Sale description",
-				discount: 0.25,
-			});
+		const restaurant2 = await createRestaurantUseCase.execute({
+			name: "Restaurant 2",
+			address: "restaurant address",
+			schedule: {
+				sun: {
+					start: "08:00",
+					end: "18:00",
+				},
+				mon: {
+					start: "08:00",
+					end: "18:00",
+				},
+				tue: {
+					start: "08:00",
+					end: "18:00",
+				},
+				wed: {
+					start: "08:00",
+					end: "18:00",
+				},
+				thu: {
+					start: "08:00",
+					end: "18:00",
+				},
+				fri: {
+					start: "08:00",
+					end: "18:00",
+				},
+				sat: {
+					start: "08:00",
+					end: "18:00",
+				},
+			},
+			userId: user.id,
+		});
 
-			await deleteSaleUseCase.execute(user.id, restaurant2.id, sale.id);
-		}).rejects.toBeInstanceOf(AppError);
+		const sale = await createSaleUseCase.execute({
+			userId: user.id,
+			restaurantId: restaurant1.id,
+			title: "Sale",
+			description: "Sale description",
+			discount: 0.25,
+		});
+
+		await expect(
+			deleteSaleUseCase.execute(user.id, restaurant2.id, sale.id)
+		).rejects.toEqual(new AppError("Sale does not belong to this restaurant."));
 	});
 });
