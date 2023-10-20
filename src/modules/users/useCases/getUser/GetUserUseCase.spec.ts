@@ -28,9 +28,9 @@ describe("Get User", () => {
 		expect(user.id).toEqual(newUser.id);
 	});
 
-	it("should not be able to get a inexistent user", () => {
-		expect(async () => {
-			await getUserUseCase.execute("invalid-id");
-		}).rejects.toBeInstanceOf(AppError);
+	it("should not be able to get a inexistent user", async () => {
+		await expect(getUserUseCase.execute("invalid user id")).rejects.toEqual(
+			new AppError("User not found.", 404)
+		);
 	});
 });

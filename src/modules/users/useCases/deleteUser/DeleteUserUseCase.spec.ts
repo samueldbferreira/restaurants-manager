@@ -16,25 +16,26 @@ describe("Delete User", () => {
 		usersRepository = new UsersRepositoryInMemory();
 		createUserUseCase = new CreateUserUseCase(usersRepository);
 		deleteUserUseCase = new DeleteUserUseCase(usersRepository);
+		getUserUseCase = new GetUserUseCase(usersRepository);
 	});
 
-	it("should be able to delete a user", () => {
-		expect(async () => {
-			const user = await createUserUseCase.execute({
-				name: "User Name",
-				email: "user@email.com",
-				password: "password",
-			});
+	it("should be able to delete a user", async () => {
+		const user = await createUserUseCase.execute({
+			name: "User Name",
+			email: "user@email.com",
+			password: "password",
+		});
 
-			await deleteUserUseCase.execute(user.id);
+		await deleteUserUseCase.execute(user.id);
 
-			await getUserUseCase.execute(user.id);
-		}).rejects.toBeInstanceOf(AppError);
+		await expect(getUserUseCase.execute(user.id)).rejects.toEqual(
+			new AppError("User not found.", 404)
+		);
 	});
 
-	it("should not be able to delete a inexistent user", () => {
-		expect(async () => {
-			await deleteUserUseCase.execute("invalid-id");
-		}).rejects.toBeInstanceOf(AppError);
+	it("should not be able to delete a inexistent user", async () => {
+		await expect(deleteUserUseCase.execute("invalid user id")).rejects.toEqual(
+			new AppError("User does not exist.")
+		);
 	});
 });

@@ -19,12 +19,12 @@ class GetTokenUseCase {
 	async execute(data: IRequest) {
 		const user = await this.usersRepository.findByEmail(data.email);
 		if (!user) {
-			throw new AppError("Invalid Email or password.");
+			throw new AppError("Invalid email or password.");
 		}
 
 		const correctPassword = await compare(data.password, user.password);
 		if (!correctPassword) {
-			throw new AppError("Invalid Email or password.");
+			throw new AppError("Invalid email or password.");
 		}
 
 		const token = sign({}, "8d302942f6cd3148f9c0fd07298aea52", {

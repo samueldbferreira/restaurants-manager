@@ -40,39 +40,39 @@ describe("Update User", () => {
 		expect(updatedUser).toEqual(Object.assign(user, updateData));
 	});
 
-	it("should not be able to update a inexistent user", () => {
-		expect(async () => {
-			const updateData = {
-				id: "invalid-id",
-				name: "New User Name",
-				email: "newemail@email.com",
-				password: "password",
-			};
+	it("should not be able to update a inexistent user", async () => {
+		const updateData = {
+			id: "invalid-id",
+			name: "New User Name",
+			email: "newemail@email.com",
+			password: "password",
+		};
 
-			await updateUserUseCase.execute(updateData);
-		}).rejects.toBeInstanceOf(AppError);
+		await expect(updateUserUseCase.execute(updateData)).rejects.toEqual(
+			new AppError("User does not exist.")
+		);
 	});
 
-	it("should not be able to update a user email to a already in use one", () => {
-		expect(async () => {
-			const user1 = await createUserUseCase.execute({
-				name: "User 1",
-				email: "user1@email.com",
-				password: "password",
-			});
+	it("should not be able to update a user email to a already in use one", async () => {
+		const user1 = await createUserUseCase.execute({
+			name: "User 1",
+			email: "user1@email.com",
+			password: "password",
+		});
 
-			await createUserUseCase.execute({
-				name: "User 2",
-				email: "user2@email.com",
-				password: "password",
-			});
+		await createUserUseCase.execute({
+			name: "User 2",
+			email: "user2@email.com",
+			password: "password",
+		});
 
-			await updateUserUseCase.execute({
+		await expect(
+			updateUserUseCase.execute({
 				id: user1.id,
 				name: "New User Name",
 				email: "user2@email.com",
 				password: "password",
-			});
-		}).rejects.toBeInstanceOf(AppError);
+			})
+		).rejects.toEqual(new AppError("This email is already in use."));
 	});
 });

@@ -23,19 +23,19 @@ describe("Create User", () => {
 		expect(newUser).toHaveProperty("id");
 	});
 
-	it("should not be able to create a new user with an already existing email.", () => {
-		expect(async () => {
-			await createUserUseCase.execute({
-				name: "User 1",
-				email: "user@email.com",
-				password: "password1",
-			});
+	it("should not be able to create a new user with an already existing email.", async () => {
+		await createUserUseCase.execute({
+			name: "User 1",
+			email: "user@email.com",
+			password: "password1",
+		});
 
-			await createUserUseCase.execute({
+		await expect(
+			createUserUseCase.execute({
 				name: "User 2",
 				email: "user@email.com",
 				password: "password2",
-			});
-		}).rejects.toBeInstanceOf(AppError);
+			})
+		).rejects.toEqual(new AppError("Email already in use."));
 	});
 });

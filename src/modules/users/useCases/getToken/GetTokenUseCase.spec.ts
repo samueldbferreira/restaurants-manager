@@ -34,33 +34,33 @@ describe("Get Token", () => {
 		expect(sub).toEqual(id);
 	});
 
-	it("should not be able to get a token for an invalid email", () => {
-		expect(async () => {
-			await createUserUseCase.execute({
-				name: "User",
-				email: "user@email.com",
-				password: "password",
-			});
+	it("should not be able to get a token for an invalid email", async () => {
+		await createUserUseCase.execute({
+			name: "User",
+			email: "user@email.com",
+			password: "password",
+		});
 
-			await getTokenUseCase.execute({
-				email: "invalid-email",
+		await expect(
+			getTokenUseCase.execute({
+				email: "invalid email",
 				password: "password",
-			});
-		}).rejects.toBeInstanceOf(AppError);
+			})
+		).rejects.toEqual(new AppError("Invalid email or password."));
 	});
 
-	it("should not be able to get a token for an incorrect password", () => {
-		expect(async () => {
-			await createUserUseCase.execute({
-				name: "User",
-				email: "user@email.com",
-				password: "password",
-			});
+	it("should not be able to get a token for an incorrect password", async () => {
+		await createUserUseCase.execute({
+			name: "User",
+			email: "user@email.com",
+			password: "password",
+		});
 
-			await getTokenUseCase.execute({
+		await expect(
+			getTokenUseCase.execute({
 				email: "user@email.com",
 				password: "incorrect",
-			});
-		}).rejects.toBeInstanceOf(AppError);
+			})
+		).rejects.toEqual(new AppError("Invalid email or password."));
 	});
 });
