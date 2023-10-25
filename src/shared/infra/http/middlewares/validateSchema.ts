@@ -6,6 +6,7 @@ const validateSchema = (schema: AnyZodObject) => {
 	return (req: Request, _: Response, next: NextFunction) => {
 		try {
 			schema.parse({
+				headers: req.headers,
 				params: req.params,
 				body: req.body,
 				file: req.file,
@@ -15,8 +16,6 @@ const validateSchema = (schema: AnyZodObject) => {
 			return next();
 		} catch (e) {
 			if (e instanceof ZodError) {
-				console.log(e);
-
 				throw new AppError(e.errors[0].message);
 			} else {
 				throw new AppError("Internal server error.", 500);
