@@ -6,7 +6,8 @@ class UpdateRestaurantController {
 	async handle(req: Request, res: Response) {
 		const userId = req.userId;
 		const { restaurantId } = req.params;
-		const { photo, name, address, schedule } = req.body;
+		const { name, address, schedule } = req.body;
+		const photo = req.file?.filename;
 
 		const updateRestaurantUseCase = container.resolve(UpdateRestaurantUseCase);
 
@@ -19,7 +20,7 @@ class UpdateRestaurantController {
 			schedule,
 		});
 
-		return res.status(200).json(updatedRestaurant);
+		return res.status(200).json(null);
 	}
 }
 

@@ -32,6 +32,7 @@ restaurantsRoutes.delete(
 
 restaurantsRoutes.patch(
 	"/restaurants/:restaurantId",
+	uploadMiddleware.single("photo"),
 	updateRestaurantController.handle
 );
 

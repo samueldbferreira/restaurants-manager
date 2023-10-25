@@ -2,6 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { AppError } from "../../../../shared/errors/AppError";
 import { ISchedule } from "../../entities/ISchedule";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
+import deleteFile from "../../../../utils/deleteFile";
 
 interface IRequest {
 	userId: string;
@@ -27,7 +28,6 @@ class UpdateRestaurantUseCase {
 		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
 		}
-
 		if (restaurant.userId !== data.userId) {
 			throw new AppError("Restaurant does not belong to this user.");
 		}
@@ -39,6 +39,10 @@ class UpdateRestaurantUseCase {
 			if (nameAlreadyExists) {
 				throw new AppError("This restaurant name is already in use.");
 			}
+		}
+
+		if (data.photo) {
+			deleteFile(`./tmp/restaurants/${restaurant.photo}`);
 		}
 
 		const updatedRestaurant = await this.restaurantsRepository.update(data);
