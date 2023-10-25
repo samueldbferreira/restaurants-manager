@@ -6,7 +6,8 @@ class UpdateProductController {
 	async handle(req: Request, res: Response) {
 		const userId = req.userId;
 		const { restaurantId, productId } = req.params;
-		const { photo, name, price, categoryId } = req.body;
+		const { name, price, categoryId } = req.body;
+		const photo = req.file?.filename;
 
 		const updateProductUseCase = container.resolve(UpdateProductUseCase);
 

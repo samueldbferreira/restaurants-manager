@@ -3,6 +3,7 @@ import { AppError } from "../../../../shared/errors/AppError";
 import { ICategoriesRepository } from "../../repositories/ICategoriesRepository";
 import { IProductsRepository } from "../../repositories/IProductsRepository";
 import { IRestaurantsRepository } from "../../repositories/IRestaurantsRepository";
+import deleteFile from "../../../../utils/deleteFile";
 
 interface IRequest {
 	userId: string;
@@ -64,6 +65,10 @@ class UpdateProductUseCase {
 			if (category.restaurantId !== data.restaurantId) {
 				throw new AppError("Category does not belong to this restaurant.");
 			}
+		}
+
+		if (data.photo) {
+			deleteFile(`./tmp/products/${product.photo}`);
 		}
 
 		const updatedProduct = await this.productsRepository.update(data);

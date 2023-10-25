@@ -32,6 +32,7 @@ productsRoutes.delete(
 
 productsRoutes.patch(
 	"/restaurants/:restaurantId/products/:productId",
+	uploadMiddleware.single("photo"),
 	updateProductController.handle
 );
 
