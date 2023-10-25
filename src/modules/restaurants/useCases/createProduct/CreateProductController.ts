@@ -6,14 +6,15 @@ class CreateProductController {
 	async handle(req: Request, res: Response) {
 		const userId = req.userId;
 		const { restaurantId } = req.params;
-		const { name, photo, price, categoryId } = req.body;
+		const { name, price, categoryId } = req.body;
+		const photo = req.file?.filename;
 
 		const createProductUseCase = container.resolve(CreateProductUseCase);
 
 		const newProduct = await createProductUseCase.execute({
 			name,
 			photo,
-			price,
+			price: Number(price),
 			categoryId,
 			restaurantId,
 			userId,

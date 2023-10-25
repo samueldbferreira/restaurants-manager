@@ -28,21 +28,17 @@ class CreateProductUseCase {
 		const restaurant = await this.restaurantsRepository.findById(
 			data.restaurantId
 		);
-
 		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
 		}
-
 		if (restaurant.userId !== data.userId) {
 			throw new AppError("Restaurant does not belong to the user.");
 		}
 
 		const category = await this.categoriesRepository.findById(data.categoryId);
-
 		if (!category) {
 			throw new AppError("Invalid category ID.");
 		}
-
 		if (restaurant.id !== category.restaurantId) {
 			throw new AppError("Category does not belong to this restaurant.");
 		}
