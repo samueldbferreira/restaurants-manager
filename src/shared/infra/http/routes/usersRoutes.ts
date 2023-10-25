@@ -4,6 +4,8 @@ import { CreateUserController } from "../../../../modules/users/useCases/createU
 import { GetUserController } from "../../../../modules/users/useCases/getUser/GetUserController";
 import { DeleteUserController } from "../../../../modules/users/useCases/deleteUser/DeleteUserController";
 import { UpdateUserController } from "../../../../modules/users/useCases/updateUser/UpdateUserController";
+import { validateSchema } from "../middlewares/validateSchema";
+import { CreateUserSchema } from "../../../schemas/UsersSchemas";
 
 const createUserController = new CreateUserController();
 const getUserController = new GetUserController();
@@ -12,7 +14,11 @@ const deleteUserUseCase = new DeleteUserController();
 
 const usersRoutes = Router();
 
-usersRoutes.post("/users", createUserController.handle);
+usersRoutes.post(
+	"/users",
+	validateSchema(CreateUserSchema),
+	createUserController.handle
+);
 
 usersRoutes.get("/users", checkAuth, getUserController.handle);
 
