@@ -4,7 +4,8 @@ import { CreateRestaurantUseCase } from "./CreateRestaurantUseCase";
 
 class CreateRestaurantController {
 	async handle(req: Request, res: Response) {
-		const { name, photo, address, schedule } = req.body;
+		const { name, address, schedule } = req.body;
+		const photo = req.file?.filename;
 		const userId = req.userId;
 
 		const createRestaurantUseCase = container.resolve(CreateRestaurantUseCase);
@@ -13,7 +14,7 @@ class CreateRestaurantController {
 			name,
 			photo,
 			address,
-			schedule,
+			schedule: JSON.parse(schedule),
 			userId,
 		});
 
