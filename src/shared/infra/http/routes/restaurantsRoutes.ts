@@ -7,6 +7,11 @@ import { ListRestaurantsController } from "../../../../modules/restaurants/useCa
 import { DeleteRestaurantController } from "../../../../modules/restaurants/useCases/deleteRestaurant/DeleteRestaurantController";
 import { UpdateRestaurantController } from "../../../../modules/restaurants/useCases/updateRestaurant/UpdateRestaurantController";
 import uploadConfig from "../../../../config/upload";
+import { validateSchema } from "../middlewares/validateSchema";
+import {
+	CreateRestaurantSchema,
+	UpdateRestaurantSchema,
+} from "../../../schemas/RestaurantsSchemas";
 
 const uploadMiddleware = multer(uploadConfig.upload("tmp/restaurants"));
 
@@ -33,12 +38,14 @@ restaurantsRoutes.delete(
 restaurantsRoutes.patch(
 	"/restaurants/:restaurantId",
 	uploadMiddleware.single("photo"),
+	validateSchema(UpdateRestaurantSchema),
 	updateRestaurantController.handle
 );
 
 restaurantsRoutes.post(
 	"/restaurants",
 	uploadMiddleware.single("photo"),
+	validateSchema(CreateRestaurantSchema),
 	createRestaurantController.handle
 );
 

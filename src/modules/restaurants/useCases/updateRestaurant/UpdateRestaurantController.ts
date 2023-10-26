@@ -20,7 +20,7 @@ class UpdateRestaurantController {
 			schedule,
 		});
 
-		return res.status(200).json(null);
+		return res.status(200).json(updatedRestaurant);
 	}
 }
 
