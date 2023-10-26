@@ -20,13 +20,7 @@ export const UpdateCategorySchema = z.object({
 		categoryId: z.string().uuid("Invalid category ID."),
 	}),
 	body: z.object({
-		name: z
-			.string({ required_error: "Name is required." })
-			.min(1, "Invalid name.")
-			.optional(),
-		description: z
-			.string({ required_error: "Description is required." })
-			.min(1, "Invalid Description.")
-			.optional(),
+		name: z.string().min(1, "Invalid name.").optional(),
+		description: z.string().min(1, "Invalid Description.").optional(),
 	}),
 });

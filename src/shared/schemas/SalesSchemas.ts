@@ -32,7 +32,7 @@ export const CreateSaleSchema = z.object({
 			.string({ required_error: "Description is required." })
 			.min(1, "Invalid description."),
 		discount: z
-			.number()
+			.number({ required_error: "Discount is required." })
 			.min(0.01, "Invalid discount value.")
 			.max(0.9, "Invalid discount value."),
 	}),
@@ -44,14 +44,8 @@ export const UpdateSaleSchema = z.object({
 		saleId: z.string().uuid("Invalid sale ID."),
 	}),
 	body: z.object({
-		title: z
-			.string({ required_error: "Title is required." })
-			.min(1, "Invalid title.")
-			.optional(),
-		description: z
-			.string({ required_error: "Description is required." })
-			.min(1, "Invalid description.")
-			.optional(),
+		title: z.string().min(1, "Invalid title.").optional(),
+		description: z.string().min(1, "Invalid description.").optional(),
 		discount: z
 			.number()
 			.min(0.01, "Invalid discount value.")

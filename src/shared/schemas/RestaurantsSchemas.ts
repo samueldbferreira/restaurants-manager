@@ -25,28 +25,24 @@ export const CreateRestaurantSchema = z.object({
 		address: z
 			.string({ required_error: "Address is required." })
 			.min(1, "Invalid address."),
-		schedule: z.string().refine((value) => {
-			try {
-				const parsedSchedule = JSON.parse(value);
-				ScheduleSchema.parse(parsedSchedule);
-				return true;
-			} catch (_) {
-				return false;
-			}
-		}, "Invalid schedule format."),
+		schedule: z
+			.string({ required_error: "Schedule is required." })
+			.refine((value) => {
+				try {
+					const parsedSchedule = JSON.parse(value);
+					ScheduleSchema.parse(parsedSchedule);
+					return true;
+				} catch (_) {
+					return false;
+				}
+			}, "Invalid schedule format."),
 	}),
 });
 
 export const UpdateRestaurantSchema = z.object({
 	body: z.object({
-		name: z
-			.string({ required_error: "Name is required" })
-			.min(1, "Invalid name.")
-			.optional(),
-		address: z
-			.string({ required_error: "Address is required." })
-			.min(1, "Invalid address.")
-			.optional(),
+		name: z.string().min(1, "Invalid name.").optional(),
+		address: z.string().min(1, "Invalid address.").optional(),
 		schedule: z
 			.string()
 			.refine((value) => {

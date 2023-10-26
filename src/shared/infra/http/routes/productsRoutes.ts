@@ -7,6 +7,11 @@ import { DeleteProductController } from "../../../../modules/restaurants/useCase
 import { UpdateProductController } from "../../../../modules/restaurants/useCases/updateProduct/UpdateProductController";
 import { checkAuth } from "../middlewares/checkAuth";
 import uploadConfig from "../../../../config/upload";
+import { validateSchema } from "../middlewares/validateSchema";
+import {
+	CreateProductSchema,
+	UpdateProductSchema,
+} from "../../../schemas/ProductsSchemas";
 
 const createProductController = new CreateProductController();
 const listProductsController = new ListProductsController();
@@ -33,12 +38,14 @@ productsRoutes.delete(
 productsRoutes.patch(
 	"/restaurants/:restaurantId/products/:productId",
 	uploadMiddleware.single("photo"),
+	validateSchema(UpdateProductSchema),
 	updateProductController.handle
 );
 
 productsRoutes.post(
 	"/restaurants/:restaurantId/products",
 	uploadMiddleware.single("photo"),
+	validateSchema(CreateProductSchema),
 	createProductController.handle
 );
 
