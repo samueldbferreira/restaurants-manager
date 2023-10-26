@@ -5,6 +5,11 @@ import { DeleteCategoryController } from "../../../../modules/restaurants/useCas
 import { UpdateCategoryController } from "../../../../modules/restaurants/useCases/updateCategory/UpdateCategoryController";
 import { checkAuth } from "../middlewares/checkAuth";
 import { GetCategoryController } from "../../../../modules/restaurants/useCases/getCategory/GetCategoryController";
+import { validateSchema } from "../middlewares/validateSchema";
+import {
+	CreateCategorySchema,
+	UpdateCategorySchema,
+} from "../../../schemas/CategoriesSchemas";
 
 const getCategoryController = new GetCategoryController();
 const createCategoryController = new CreateCategoryController();
@@ -17,27 +22,29 @@ const categoriesRoutes = Router();
 categoriesRoutes.use(checkAuth);
 
 categoriesRoutes.get(
-	"/restaurants/:restaurantId?/categories/:categoryId",
+	"/restaurants/:restaurantId/categories/:categoryId",
 	getCategoryController.handle
 );
 
 categoriesRoutes.delete(
-	"/restaurants/:restaurantId?/categories/:categoryId",
+	"/restaurants/:restaurantId/categories/:categoryId",
 	deleteCategoryController.handle
 );
 
 categoriesRoutes.patch(
-	"/restaurants/:restaurantId?/categories/:categoryId",
+	"/restaurants/:restaurantId/categories/:categoryId",
+	validateSchema(UpdateCategorySchema),
 	updateCategoryController.handle
 );
 
 categoriesRoutes.post(
-	"/restaurants/:restaurantId?/categories",
+	"/restaurants/:restaurantId/categories",
+	validateSchema(CreateCategorySchema),
 	createCategoryController.handle
 );
 
 categoriesRoutes.get(
-	"/restaurants/:restaurantId?/categories",
+	"/restaurants/:restaurantId/categories",
 	listCategoriesController.handle
 );
 
