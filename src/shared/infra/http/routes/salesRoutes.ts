@@ -7,6 +7,13 @@ import { UpdateSaleController } from "../../../../modules/restaurants/useCases/u
 import { AddSaleProductsController } from "../../../../modules/restaurants/useCases/addSaleProducts/AddSaleProductsController";
 import { RemoveSaleProductsController } from "../../../../modules/restaurants/useCases/removeSaleProducts/RemoveSaleProductsController";
 import { DeleteSaleController } from "../../../../modules/restaurants/useCases/deleteSale/DeleteSaleController";
+import { validateSchema } from "../middlewares/validateSchema";
+import {
+	AddSaleProductsSchema,
+	CreateSaleSchema,
+	RemoveSaleProductsSchema,
+	UpdateSaleSchema,
+} from "../../../schemas/SalesSchemas";
 
 const addSaleProductsController = new AddSaleProductsController();
 const removeSaleProductsController = new RemoveSaleProductsController();
@@ -22,11 +29,13 @@ salesRoutes.use(checkAuth);
 
 salesRoutes.post(
 	"/restaurants/:restaurantId/sales/:saleId/products",
+	validateSchema(AddSaleProductsSchema),
 	addSaleProductsController.handle
 );
 
 salesRoutes.delete(
 	"/restaurants/:restaurantId/sales/:saleId/products",
+	validateSchema(RemoveSaleProductsSchema),
 	removeSaleProductsController.handle
 );
 
@@ -37,6 +46,7 @@ salesRoutes.get(
 
 salesRoutes.patch(
 	"/restaurants/:restaurantId/sales/:saleId",
+	validateSchema(UpdateSaleSchema),
 	updateSaleController.handle
 );
 
@@ -49,6 +59,7 @@ salesRoutes.get("/restaurants/:restaurantId/sales", listSalesController.handle);
 
 salesRoutes.post(
 	"/restaurants/:restaurantId/sales",
+	validateSchema(CreateSaleSchema),
 	createSaleController.handle
 );
 
