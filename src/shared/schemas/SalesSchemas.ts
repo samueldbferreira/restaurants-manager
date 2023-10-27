@@ -26,13 +26,22 @@ export const CreateSaleSchema = z.object({
 	}),
 	body: z.object({
 		title: z
-			.string({ required_error: "Title is required." })
+			.string({
+				required_error: "Title is required.",
+				invalid_type_error: "Title must be a string.",
+			})
 			.min(1, "Invalid title."),
 		description: z
-			.string({ required_error: "Description is required." })
+			.string({
+				required_error: "Description is required.",
+				invalid_type_error: "Description must be a string.",
+			})
 			.min(1, "Invalid description."),
 		discount: z
-			.number({ required_error: "Discount is required." })
+			.number({
+				required_error: "Discount is required.",
+				invalid_type_error: "Discount must be a number.",
+			})
 			.min(0.01, "Invalid discount value.")
 			.max(0.9, "Invalid discount value."),
 	}),
@@ -44,10 +53,16 @@ export const UpdateSaleSchema = z.object({
 		saleId: z.string().uuid("Invalid sale ID."),
 	}),
 	body: z.object({
-		title: z.string().min(1, "Invalid title.").optional(),
-		description: z.string().min(1, "Invalid description.").optional(),
+		title: z
+			.string({ invalid_type_error: "Title must be a string." })
+			.min(1, "Invalid title.")
+			.optional(),
+		description: z
+			.string({ invalid_type_error: "Description must be a string." })
+			.min(1, "Invalid description.")
+			.optional(),
 		discount: z
-			.number()
+			.number({ invalid_type_error: "Discount must be a number." })
 			.min(0.01, "Invalid discount value.")
 			.max(0.9, "Invalid discount value.")
 			.optional(),

@@ -6,10 +6,16 @@ export const CreateCategorySchema = z.object({
 	}),
 	body: z.object({
 		name: z
-			.string({ required_error: "Name is required." })
+			.string({
+				required_error: "Name is required.",
+				invalid_type_error: "Name must be a string.",
+			})
 			.min(1, "Invalid name."),
 		description: z
-			.string({ required_error: "Description is required." })
+			.string({
+				required_error: "Description is required.",
+				invalid_type_error: "Description must be a string.",
+			})
 			.min(1, "Invalid Description."),
 	}),
 });
@@ -20,7 +26,13 @@ export const UpdateCategorySchema = z.object({
 		categoryId: z.string().uuid("Invalid category ID."),
 	}),
 	body: z.object({
-		name: z.string().min(1, "Invalid name.").optional(),
-		description: z.string().min(1, "Invalid Description.").optional(),
+		name: z
+			.string({ invalid_type_error: "Name must be a string." })
+			.min(1, "Invalid name.")
+			.optional(),
+		description: z
+			.string({ invalid_type_error: "Description must be a string." })
+			.min(1, "Invalid Description.")
+			.optional(),
 	}),
 });

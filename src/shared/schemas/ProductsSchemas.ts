@@ -6,9 +6,15 @@ export const CreateProductSchema = z.object({
 	}),
 	body: z.object({
 		name: z
-			.string({ required_error: "Name is required." })
+			.string({
+				required_error: "Name is required.",
+				invalid_type_error: "Name must be a string.",
+			})
 			.min(1, "Invalid product name."),
-		price: z.number({ required_error: "Price is required." }),
+		price: z.number({
+			required_error: "Price is required.",
+			invalid_type_error: "Price must be a number.",
+		}),
 		categoryId: z
 			.string({ required_error: "Category ID is required." })
 			.uuid("Invalid category ID."),
@@ -21,8 +27,13 @@ export const UpdateProductSchema = z.object({
 		productId: z.string().uuid("Invalid product ID."),
 	}),
 	body: z.object({
-		name: z.string().min(1, "Invalid product name.").optional(),
-		price: z.number().optional(),
+		name: z
+			.string({ invalid_type_error: "Name must be a string." })
+			.min(1, "Invalid product name.")
+			.optional(),
+		price: z
+			.number({ invalid_type_error: "Price must be a number." })
+			.optional(),
 		categoryId: z.string().uuid("Invalid category ID.").optional(),
 	}),
 });
