@@ -1,0 +1,1113 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Restaurants Manager API",
+		"description": "O objetivo desta API é permitir que os usuários gerenciem restaurantes e seus produtos, categorias e promoções.",
+		"version": "1.0.0"
+	},
+	"paths": {
+		"/users": {
+			"post": {
+				"tags": ["Usuários"],
+				"summary": "Cadastra um novo usuário",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/definitions/UserInput"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/User"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#/responses/badRequest"
+					}
+				}
+			},
+			"get": {
+				"tags": ["Usuários"],
+				"summary": "Returna os dados do usuário autenticado",
+				"security": [{ "bearerAuth": [] }],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/User"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "O usuário buscado não pôde ser encontrado."
+					}
+				}
+			},
+			"patch": {
+				"tags": ["Usuários"],
+				"summary": "Atualiza os dados do usuário autenticado",
+				"security": [{ "bearerAuth": [] }],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/definitions/UserUpdateInput"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/User"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"delete": {
+				"tags": ["Usuários"],
+				"summary": "Deleta o usuário autenticado",
+				"security": [{ "bearerAuth": [] }],
+				"responses": {
+					"204": {
+						"description": "Success"
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		},
+		"/auth": {
+			"post": {
+				"tags": ["Autenticação"],
+				"summary": "Autenticação do usuário",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/definitions/AuthInput"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"token": {
+											"type": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		},
+		"/restaurants": {
+			"post": {
+				"tags": ["Restaurantes"],
+				"summary": "Cria um novo restaurante",
+				"security": [{ "bearerAuth": [] }],
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"$ref": "#/definitions/RestaurantInput"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/Restaurant"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"get": {
+				"tags": ["Restaurantes"],
+				"summary": "Lista todos os restaurantes do usuário",
+				"security": [{ "bearerAuth": [] }],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/definitions/Restaurant"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		},
+		"/restaurants/{restaurantId}": {
+			"get": {
+				"tags": ["Restaurantes"],
+				"summary": "Retorna os dados do restaurante especificado.",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"$ref": "#/parameters/restaurantId"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/Restaurant"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"patch": {
+				"tags": ["Restaurantes"],
+				"summary": "Atualiza os dados do restaurante especificado",
+				"security": [{ "bearerAuth": [] }],
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"$ref": "#/definitions/RestaurantUpdateInput"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/Restaurant"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"delete": {
+				"tags": ["Restaurantes"],
+				"summary": "Deleta o restaurante especificado",
+				"security": [{ "bearerAuth": [] }],
+				"responses": {
+					"204": {
+						"description": "Success"
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		},
+		"/restaurants/{restaurantId}/categories": {
+			"post": {
+				"tags": ["Categorias"],
+				"summary": "Cria uma nova categoria",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [{ "$ref": "#/parameters/restaurantId" }],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/definitions/CategoryInput"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/Category"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"get": {
+				"tags": ["Categorias"],
+				"summary": "Lista todas as categorias de um restaurante",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"$ref": "#/parameters/restaurantId"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/definitions/Category"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		},
+		"/restaurants/{restaurantId}/categories/{categoryId}": {
+			"get": {
+				"tags": ["Categorias"],
+				"summary": "Retorna os dados da categoria especificada",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"$ref": "#/parameters/restaurantId"
+					},
+					{
+						"$ref": "#/parameters/categoryId"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/Category"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"patch": {
+				"tags": ["Categorias"],
+				"summary": "Atualiza os dados da categoria especificada",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [{ "$ref": "#/parameters/restaurantId" }],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/definitions/CategoryUpdateInput"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/Category"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"delete": {
+				"tags": ["Categorias"],
+				"summary": "Deleta a categoria especificada",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"$ref": "#/parameters/restaurantId"
+					},
+					{
+						"$ref": "#/parameters/categoryId"
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "Success"
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		},
+		"/restaurants/{restaurantId}/sales": {
+			"post": {
+				"tags": ["Promoções"],
+				"summary": "Cria uma nova promoção",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [{ "$ref": "#/parameters/restaurantId" }],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/definitions/SaleInput"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/Sale"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"get": {
+				"tags": ["Promoções"],
+				"summary": "Lista todas as promoções de um restaurante",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"$ref": "#/parameters/restaurantId"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/definitions/Sale"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		},
+		"/restaurants/{restaurantId}/sales/{saleId}": {
+			"get": {
+				"tags": ["Promoções"],
+				"summary": "Retorna os dados da promoção especificada.",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"$ref": "#/parameters/restaurantId"
+					},
+					{
+						"$ref": "#/parameters/saleId"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/Sale"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"patch": {
+				"tags": ["Promoções"],
+				"summary": "Atualiza os dados da promoção especificada",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [{ "$ref": "#/parameters/restaurantId" }],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/definitions/SaleUpdateInput"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/Sale"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"delete": {
+				"tags": ["Promoções"],
+				"summary": "Deleta a promoção especificada.",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"$ref": "#/parameters/restaurantId"
+					},
+					{
+						"$ref": "#/parameters/saleId"
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "Success"
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		},
+		"/restaurants/{restaurantId}/sales/{saleId}/products": {
+			"post": {
+				"tags": ["Promoções"],
+				"summary": "Associa produtos à promoção especificada.",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"$ref": "#/parameters/restaurantId"
+					},
+					{
+						"$ref": "#/parameters/saleId"
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"products": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									}
+								},
+								"required": ["products"]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"count": {
+											"type": "number"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"delete": {
+				"tags": ["Promoções"],
+				"summary": "Desassocia produtos à promoção especificada.",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"$ref": "#/parameters/restaurantId"
+					},
+					{
+						"$ref": "#/parameters/saleId"
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"products": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									}
+								},
+								"required": ["products"]
+							}
+						}
+					}
+				},
+				"responses": {
+					"204": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"count": {
+											"type": "number"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		},
+		"/restaurants/{restaurantId}/products": {
+			"post": {
+				"tags": ["Produtos"],
+				"summary": "Cria um novo produto",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [{ "$ref": "#/parameters/restaurantId" }],
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"$ref": "#/definitions/ProductInput"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/Product"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"get": {
+				"tags": ["Produtos"],
+				"summary": "Lista todas os produtos de um restaurante",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"$ref": "#/parameters/restaurantId"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/definitions/Product"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		},
+		"/restaurants/{restaurantId}/products/{productId}": {
+			"get": {
+				"tags": ["Produtos"],
+				"summary": "Retorna os dados do produto especificado.",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"$ref": "#/parameters/restaurantId"
+					},
+					{
+						"$ref": "#/parameters/productId"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/Product"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"patch": {
+				"tags": ["Produtos"],
+				"summary": "Atualiza os dados do produto especificado",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [{ "$ref": "#/parameters/restaurantId" }],
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"$ref": "#/definitions/ProductUpdateInput"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/definitions/Product"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			},
+			"delete": {
+				"tags": ["Produtos"],
+				"summary": "Deleta o produto especificado.",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"$ref": "#/parameters/restaurantId"
+					},
+					{
+						"$ref": "#/parameters/productId"
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "Success"
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				}
+			}
+		}
+	},
+	"parameters": {
+		"restaurantId": {
+			"name": "restaurantId",
+			"in": "path",
+			"description": "ID do restaurante",
+			"required": true,
+			"schema": {
+				"type": "string"
+			}
+		},
+		"categoryId": {
+			"name": "categoryId",
+			"in": "path",
+			"description": "ID da categoria",
+			"required": true,
+			"schema": {
+				"type": "string"
+			}
+		},
+		"saleId": {
+			"name": "saleId",
+			"in": "path",
+			"description": "ID da promoção",
+			"required": true,
+			"schema": {
+				"type": "string"
+			}
+		},
+		"productId": {
+			"name": "productId",
+			"in": "path",
+			"description": "ID do produto",
+			"required": true,
+			"schema": {
+				"type": "string"
+			}
+		}
+	},
+	"definitions": {
+		"UserInput": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string"
+				},
+				"password": {
+					"type": "string"
+				}
+			},
+			"required": ["name", "email", "password"]
+		},
+		"UserUpdateInput": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string"
+				},
+				"password": {
+					"type": "string"
+				}
+			}
+		},
+		"User": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string"
+				}
+			}
+		},
+		"AuthInput": {
+			"type": "object",
+			"properties": {
+				"email": {
+					"type": "string"
+				},
+				"password": {
+					"type": "string"
+				}
+			},
+			"required": ["email", "password"]
+		},
+		"RestaurantInput": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"address": {
+					"type": "string"
+				},
+				"schedule": {
+					"type": "string",
+					"format": "json"
+				},
+				"photo": {
+					"type": "string",
+					"format": "binary"
+				}
+			},
+			"required": ["name", "address", "schedule"]
+		},
+		"RestaurantUpdateInput": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"address": {
+					"type": "string"
+				},
+				"schedule": {
+					"type": "string",
+					"format": "json"
+				},
+				"photo": {
+					"type": "string",
+					"format": "binary"
+				}
+			}
+		},
+		"Restaurant": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"address": {
+					"type": "string"
+				},
+				"schedule": {
+					"type": "string"
+				},
+				"photo": {
+					"type": "string"
+				},
+				"createdAt": {
+					"type": "string"
+				},
+				"userId": {
+					"type": "string"
+				}
+			}
+		},
+		"CategoryInput": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				}
+			},
+			"required": ["name", "description"]
+		},
+		"CategoryUpdateInput": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				}
+			}
+		},
+		"Category": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				}
+			}
+		},
+		"SaleInput": {
+			"type": "object",
+			"properties": {
+				"title": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"discount": {
+					"type": "number"
+				}
+			},
+			"required": ["title", "description", "discount"]
+		},
+		"SaleUpdateInput": {
+			"type": "object",
+			"properties": {
+				"title": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"discount": {
+					"type": "number"
+				}
+			}
+		},
+		"Sale": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"discount": {
+					"type": "number"
+				},
+				"restaurantId": {
+					"type": "string"
+				},
+				"createdAt": {
+					"type": "string"
+				}
+			}
+		},
+		"ProductInput": {
+			"type": "object",
+			"properties": {
+				"photo": {
+					"type": "string",
+					"format": "binary"
+				},
+				"name": {
+					"type": "string"
+				},
+				"price": {
+					"type": "number"
+				},
+				"categoryId": {
+					"type": "string"
+				}
+			},
+			"required": ["name", "price", "categoryId"]
+		},
+		"ProductUpdateInput": {
+			"type": "object",
+			"properties": {
+				"photo": {
+					"type": "string",
+					"format": "binary"
+				},
+				"name": {
+					"type": "string"
+				},
+				"price": {
+					"type": "number"
+				},
+				"categoryId": {
+					"type": "string"
+				}
+			}
+		},
+		"Product": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"photo": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"price": {
+					"type": "number"
+				},
+				"categoryId": {
+					"type": "string"
+				},
+				"restaurantId": {
+					"type": "string"
+				},
+				"saleId": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"responses": {
+		"badRequest": {
+			"description": "Bad Request"
+		}
+	},
+	"components": {
+		"securitySchemes": {
+			"bearerAuth": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
+	}
+}
