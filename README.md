@@ -5,7 +5,7 @@ O objetivo desta API é permitir que os usuários gerenciem restaurantes e os pr
 
 ## Tecnologias utilizadas
 
-TypeScript, Node, Express.js, JWT, Prisma e Jest.
+TypeScript, Node, Express.js, JWT, Prisma, Jest e Swagger.
 
 
 ## Funcionalidades
@@ -68,7 +68,7 @@ Instale as dependências
 
 Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env
 
-`DATABASE_URL="#"`
+`DATABASE_URL="mongodb+srv://rmanager:tmPmOrt1EFiVgyP5@cluster0.ygcafer.mongodb.net/restaurants-manager?retryWrites=true&w=majority"`
 
 Inicie o servidor
 
@@ -89,5 +89,5 @@ Para rodar os testes, rode o seguinte comando
 
 ## Documentação
 
-[Documentação](https://link-da-documentação)
+[Documentação](http://localhost:3333/docs)
 
