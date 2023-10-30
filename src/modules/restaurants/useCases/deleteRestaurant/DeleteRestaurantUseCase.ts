@@ -16,7 +16,7 @@ class DeleteRestaurantUseCase {
 			throw new AppError("Restaurant does not exist.");
 		}
 		if (restaurant.userId !== userId) {
-			throw new AppError("Restaurant does not belong to this user.");
+			throw new AppError("Restaurant does not belong to this user.", 403);
 		}
 
 		if (restaurant.photo) {

@@ -18,7 +18,7 @@ class GetCategoryUseCase {
 			throw new AppError("Invalid restaurant ID.");
 		}
 		if (restaurant.userId !== userId) {
-			throw new AppError("Restaurant does not belong to this user.");
+			throw new AppError("Restaurant does not belong to this user.", 403);
 		}
 
 		const category = await this.categoriesRepository.findById(categoryId);
@@ -26,7 +26,7 @@ class GetCategoryUseCase {
 			throw new AppError("Invalid category ID.");
 		}
 		if (category.restaurantId !== restaurantId) {
-			throw new AppError("Category does not belong to the restaurant.");
+			throw new AppError("Category does not belong to the restaurant.", 403);
 		}
 
 		return {

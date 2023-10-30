@@ -18,17 +18,15 @@ class DeleteCategoryUseCase {
 			throw new AppError("Invalid restaurant ID.");
 		}
 		if (restaurant.userId !== userId) {
-			throw new AppError("Restaurant does not belong to this user.");
+			throw new AppError("Restaurant does not belong to this user.", 403);
 		}
 
 		const category = await this.categoriesRepository.findById(categoryId);
-
 		if (!category) {
 			throw new AppError("Category does not exist.");
 		}
-
 		if (category.restaurantId !== restaurantId) {
-			throw new AppError("Category does not belong to this restaurant.");
+			throw new AppError("Category does not belong to this restaurant.", 403);
 		}
 
 		await this.categoriesRepository.delete(category.id);

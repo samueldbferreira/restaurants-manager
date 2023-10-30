@@ -23,13 +23,11 @@ class CreateCategoryUseCase {
 		const restaurant = await this.restaurantsRepository.findById(
 			data.restaurantId
 		);
-		
 		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
 		}
-
 		if (restaurant.userId !== data.userId) {
-			throw new AppError("Restaurant does not belong to his user.");
+			throw new AppError("Restaurant does not belong to his user.", 403);
 		}
 
 		const nameAlreadyExists = await this.categoriesRepository.findByName(

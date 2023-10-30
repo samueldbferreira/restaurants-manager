@@ -24,20 +24,17 @@ class CreateSaleUseCase {
 		const restaurant = await this.restaurantsRepository.findById(
 			data.restaurantId
 		);
-
 		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
-		}
-
+		} 
 		if (restaurant.userId !== data.userId) {
-			throw new AppError("Restaurant does not belong to the user.");
+			throw new AppError("Restaurant does not belong to the user.", 403);
 		}
 
 		const titleAlreadyExists = await this.salesRepository.findByTitle(
 			data.title,
 			data.restaurantId
 		);
-
 		if (titleAlreadyExists) {
 			throw new AppError("This sale name is already in use.");
 		}

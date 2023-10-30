@@ -27,7 +27,7 @@ class AddSaleProductsUseCase {
 			throw new AppError("Invalid restaurant ID.");
 		}
 		if (restaurant.userId !== data.userId) {
-			throw new AppError("Restaurant does not belong to this user.");
+			throw new AppError("Restaurant does not belong to this user.", 403);
 		}
 
 		const sale = await this.salesRepository.findById(data.saleId);
@@ -35,7 +35,7 @@ class AddSaleProductsUseCase {
 			throw new AppError("Invalid sale ID.");
 		}
 		if (sale.restaurantId !== data.restaurantId) {
-			throw new AppError("Sale does not belong to this restaurant.");
+			throw new AppError("Sale does not belong to this restaurant.", 403);
 		}
 
 		const count = await this.salesRepository.addProducts(

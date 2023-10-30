@@ -24,12 +24,11 @@ class UpdateRestaurantUseCase {
 		const restaurant = await this.restaurantsRepository.findById(
 			data.restaurantId
 		);
-
 		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
 		}
 		if (restaurant.userId !== data.userId) {
-			throw new AppError("Restaurant does not belong to this user.");
+			throw new AppError("Restaurant does not belong to this user.", 403);
 		}
 
 		if (data.name && data.name !== restaurant.name) {

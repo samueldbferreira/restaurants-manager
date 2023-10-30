@@ -14,23 +14,19 @@ class GetSaleUseCase {
 
 	async execute(userId: string, restaurantId: string, saleId: string) {
 		const restaurant = await this.restaurantsRepository.findById(restaurantId);
-
 		if (!restaurant) {
 			throw new AppError("Invalid restaurant ID.");
 		}
-
 		if (restaurant.userId !== userId) {
-			throw new AppError("Restaurant does not belong to this user.");
+			throw new AppError("Restaurant does not belong to this user.", 403);
 		}
 
 		const sale = await this.salesRepository.findById(saleId);
-
 		if (!sale) {
 			throw new AppError("Invalid sale ID.");
 		}
-
 		if (sale.restaurantId !== restaurantId) {
-			throw new AppError("Sale does not belong to this restaurant.");
+			throw new AppError("Sale does not belong to this restaurant.", 403);
 		}
 
 		return Object.assign({

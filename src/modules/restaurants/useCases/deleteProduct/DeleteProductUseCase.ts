@@ -19,7 +19,7 @@ class DeleteProductUseCase {
 			throw new AppError("Invalid restaurant ID.");
 		}
 		if (restaurant.userId !== userId) {
-			throw new AppError("Restaurant does not belong to this user.");
+			throw new AppError("Restaurant does not belong to this user.", 403);
 		}
 
 		const product = await this.productsRepository.findById(productId);
@@ -27,7 +27,7 @@ class DeleteProductUseCase {
 			throw new AppError("Product does not exist.", 404);
 		}
 		if (product.restaurantId !== restaurantId) {
-			throw new AppError("Product does not belong to this restaurant.");
+			throw new AppError("Product does not belong to this restaurant.", 403);
 		}
 
 		if (product.photo) {

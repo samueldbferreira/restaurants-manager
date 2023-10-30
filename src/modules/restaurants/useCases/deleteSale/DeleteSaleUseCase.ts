@@ -18,7 +18,7 @@ class DeleteSaleUseCase {
 			throw new AppError("Invalid restaurant ID.");
 		}
 		if (restaurant.userId !== userId) {
-			throw new AppError("Restaurant does not belong to this user.");
+			throw new AppError("Restaurant does not belong to this user.", 403);
 		}
 
 		const sale = await this.salesRepository.findById(saleId);
@@ -26,7 +26,7 @@ class DeleteSaleUseCase {
 			throw new AppError("Invalid sale ID.");
 		}
 		if (sale.restaurantId !== restaurantId) {
-			throw new AppError("Sale does not belong to this restaurant.");
+			throw new AppError("Sale does not belong to this restaurant.", 403);
 		}
 
 		await this.salesRepository.delete(saleId);
